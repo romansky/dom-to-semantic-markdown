@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "CommonJS",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "lib": [
+      "DOM",
+      "ES2022"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "examples",
+    "tests"
+  ]
+}

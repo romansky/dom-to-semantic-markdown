@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DOM to Semantic Markdown Tests</title>
+    <style>
+        .test-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>DOM to Markdown Conversion Tests</h1>
+
+<!-- Test Cases -->
+<div id="test1" class="test-container">
+    <h2>Simple Paragraph</h2>
+    <p>This is a simple paragraph.</p>
+</div>
+
+<div id="test2" class="test-container">
+    <h2>Nested Elements</h2>
+    <div><h3>Header inside a div</h3></div>
+</div>
+
+<div id="test3" class="test-container">
+    <h2>Unordered List</h2>
+    <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+    </ul>
+</div>
+
+<div id="test4" class="test-container">
+    <h2>Ordered List</h2>
+    <ol>
+        <li>First Item</li>
+        <li>Second Item</li>
+        <li>Third Item</li>
+    </ol>
+</div>
+
+<div id="test5" class="test-container">
+    <h2>Special Elements</h2>
+    <footer>This is footer content</footer>
+</div>
+
+<div id="test6" class="test-container">
+    <div>
+        <h6>Benefits for Sales</h6>
+        <ul style="line-height:2">
+            <li><p>Onboarding and training</p></li>
+            <li><p>Share and curate knowledge of what works</p></li>
+            <li><p>Confidence and expertise in sales pitch and positioning</p></li>
+            <li><p>Increased sales success</p></li>
+        </ul>
+    </div>
+</div>
+
+
+<div id="test7" class="test-container">
+    <h2>Bold and Italic Text</h2>
+    <p>This is <strong>bold</strong> and this is <em>italic</em>.</p>
+</div>
+
+<div id="test8" class="test-container">
+    <h2>Strikethrough Text</h2>
+    <p>This is <s>strikethrough</s> text.</p>
+</div>
+
+<div id="test9" class="test-container">
+    <h2>Inline Code</h2>
+    <p>Here is some <code>inline code</code>.</p>
+</div>
+
+<div id="test10" class="test-container">
+    <h2>Blockquote</h2>
+    <blockquote>
+        <p>This is a blockquote.</p>
+    </blockquote>
+</div>
+
+
+<div id="test11" class="test-container">
+    <table class="ws-table-all notranslate">
+        <tbody>
+        <tr>
+            <th>Tag</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_table.asp">&lt;table&gt;</a></td>
+            <td>Defines a table</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_th.asp">&lt;th&gt;</a></td>
+            <td>Defines a header cell in a table</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_tr.asp">&lt;tr&gt;</a></td>
+            <td>Defines a row in a table</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_td.asp">&lt;td&gt;</a></td>
+            <td>Defines a cell in a table</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_caption.asp">&lt;caption&gt;</a></td>
+            <td>Defines a table caption</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_colgroup.asp">&lt;colgroup&gt;</a></td>
+            <td>Specifies a group of one or more columns in a table for formatting</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_col.asp">&lt;col&gt;</a></td>
+            <td>Specifies column properties for each column within a &lt;colgroup&gt; element</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_thead.asp">&lt;thead&gt;</a></td>
+            <td>Groups the header content in a table</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_tbody.asp">&lt;tbody&gt;</a></td>
+            <td>Groups the body content in a table</td>
+        </tr>
+        <tr>
+            <td><a href="/tags/tag_tfoot.asp">&lt;tfoot&gt;</a></td>
+            <td>Groups the footer content in a table</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="../dist/browser/bundle.js"></script>
+
+<script>
+
+    // Get and set the current domain from the browser's location
+    const currentDomain = window.location.origin;
+
+    function deepEqual(actual, expected, testName, testCodeSnippet) {
+        if (JSON.stringify(actual) === JSON.stringify(expected)) {
+            console.log(`PASS: ${testName}`);
+        } else {
+            console.error(`FAIL: ${testName}\nExpect: ${JSON.stringify(expected, null, 2)}\nActual: ${JSON.stringify(actual, null, 2)}`);
+            console.log(`To reproduce this test, run the following code in the console:\n${testCodeSnippet}`);
+        }
+    }
+
+    function runTests() {
+        // Test 1: Simple Paragraph
+        const test1 = document.getElementById('test1');
+        const test1Result = htmlToSMD.htmlToMarkdownAST(test1);
+        const test1Expected = [
+            {type: 'heading', level: 2, content: 'Simple Paragraph'},
+            {type: 'text', content: 'This is a simple paragraph.'},
+            {type: 'text', content: "\n\n"}
+        ];
+        deepEqual(test1Result, test1Expected, "Test 1", "convertElementToMarkdown(document.getElementById('test1'))");
+
+        // Test 2: Nested Elements
+        const test2 = document.getElementById('test2');
+        const test2Result = htmlToSMD.htmlToMarkdownAST(test2);
+        const test2Expected = [
+            {type: 'heading', level: 2, content: 'Nested Elements'},
+            {type: 'heading', level: 3, content: 'Header inside a div'}
+        ];
+        deepEqual(test2Result, test2Expected, "Test 2", "convertElementToMarkdown(document.getElementById('test2'))");
+
+        // Test 3: Unordered List
+        const test3 = document.getElementById('test3');
+        const test3Result = htmlToSMD.htmlToMarkdownAST(test3);
+        const test3Expected = [
+            {type: 'heading', level: 2, content: 'Unordered List'},
+            {
+                type: 'list', ordered: false, items: [
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Item 1'}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Item 2'}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Item 3'}
+                        ]
+                    }
+                ]
+            }
+        ];
+        deepEqual(test3Result, test3Expected, "Test 3", "convertElementToMarkdown(document.getElementById('test3'))");
+
+        // Test 4: Ordered List
+        const test4 = document.getElementById('test4');
+        const test4Result = htmlToSMD.htmlToMarkdownAST(test4);
+        const test4Expected = [
+            {type: 'heading', level: 2, content: 'Ordered List'},
+            {
+                type: 'list', ordered: true, items: [
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'First Item'}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Second Item'}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Third Item'}
+                        ]
+                    }
+                ]
+            }
+        ];
+        deepEqual(test4Result, test4Expected, "Test 4", "convertElementToMarkdown(document.getElementById('test4'))");
+
+        // Test 5: Special Elements (like <footer>)
+        const test5 = document.getElementById('test5');
+        const test5Result = htmlToSMD.htmlToMarkdownAST(test5);
+        const test5Expected = [
+            {
+                "type": "heading",
+                "level": 2,
+                "content": "Special Elements"
+            },
+            {
+                "type": "semanticHtml",
+                "htmlType": "footer",
+                "content": [
+                    {
+                        "type": "text",
+                        "content": "This is footer content"
+                    }
+                ]
+            }
+        ];
+        deepEqual(test5Result, test5Expected, "Test 5", "convertElementToMarkdown(document.getElementById('test5'))");
+
+        // Test 6: Nested Heading and Unordered List
+        const test6 = document.getElementById('test6');
+        const test6Result = htmlToSMD.htmlToMarkdownAST(test6);
+        const test6Expected = [
+            {type: 'heading', level: 6, content: 'Benefits for Sales'},
+            {
+                type: 'list',
+                ordered: false,
+                items: [
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Onboarding and training'},
+                            {type: 'text', content: "\n\n"}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Share and curate knowledge of what works'},
+                            {type: 'text', content: "\n\n"}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Confidence and expertise in sales pitch and positioning'},
+                            {type: 'text', content: "\n\n"}
+                        ]
+                    },
+                    {
+                        type: 'listItem', content: [
+                            {type: 'text', content: 'Increased sales success'},
+                            {type: 'text', content: "\n\n"}
+                        ]
+                    }
+                ]
+            }
+        ];
+        deepEqual(test6Result, test6Expected, "Test 6", "convertElementToMarkdown(document.getElementById('test6'))");
+
+        // Test 7: Bold and Italic Text
+        const test7 = document.getElementById('test7');
+        const test7Result = htmlToSMD.htmlToMarkdownAST(test7);
+        const test7Expected = [
+            {type: 'heading', level: 2, content: 'Bold and Italic Text'},
+            {type: 'text', content: 'This is'},
+            {type: 'bold', content: 'bold'},
+            {type: 'text', content: 'and this is'},
+            {type: 'italic', content: 'italic'},
+            {type: 'text', content: '.'},
+            {type: 'text', content: "\n\n"}
+        ];
+        deepEqual(test7Result, test7Expected, "Test 7", "convertElementToMarkdown(document.getElementById('test7'))");
+
+        // Test 8: Strikethrough Text
+        const test8 = document.getElementById('test8');
+        const test8Result = htmlToSMD.htmlToMarkdownAST(test8);
+        const test8Expected = [
+            {type: 'heading', level: 2, content: 'Strikethrough Text'},
+            {type: 'text', content: 'This is'},
+            {type: 'strikethrough', content: 'strikethrough'},
+            {type: 'text', content: 'text.'},
+            {type: 'text', content: "\n\n"}
+        ];
+        deepEqual(test8Result, test8Expected, "Test 8", "convertElementToMarkdown(document.getElementById('test8'))");
+
+        // Test 9: Inline Code
+        const test9 = document.getElementById('test9');
+        const test9Result = htmlToSMD.htmlToMarkdownAST(test9);
+        const test9Expected = [
+            {type: 'heading', level: 2, content: 'Inline Code'},
+            {type: 'text', content: 'Here is some'},
+            {type: 'code', content: 'inline code', inline: true},
+            {type: 'text', content: '.'},
+            {type: 'text', content: "\n\n"}
+        ];
+        deepEqual(test9Result, test9Expected, "Test 9", "convertElementToMarkdown(document.getElementById('test9'))");
+
+        // Test 10: Blockquote
+        const test10 = document.getElementById('test10');
+        const test10Result = htmlToSMD.htmlToMarkdownAST(test10);
+        const test10Expected = [
+            {type: 'heading', level: 2, content: 'Blockquote'},
+            {
+                type: 'blockquote', content: [
+                    {type: 'text', content: 'This is a blockquote.'},
+                    {type: 'text', content: "\n\n"}
+                ]
+            }
+        ];
+        deepEqual(test10Result, test10Expected, "Test 10", "convertElementToMarkdown(document.getElementById('test10'))");
+
+
+        console.log("Tests completed.");
+    }
+
+    runTests();
+</script>
+
+
+<script>
+    function assertEqual(actual, expected, testName, testCodeSnippet) {
+        if (actual === expected) {
+            console.log(`PASS: ${testName}`);
+        } else {
+            console.error(`FAIL: ${testName}\nExpect: ${escapeForJavaScript(expected)}\nActual: ${escapeForJavaScript(actual)}`);
+            console.log(`To reproduce this test, run the following code in the console:\n${testCodeSnippet}`);
+            console.log(`To see the diff, run: displayDiffForTest('${escapeForJavaScript(expected)}', '${escapeForJavaScript(actual)}')`);
+        }
+    }
+
+    function escapeForJavaScript(str) {
+        return str.replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '\\r');
+    }
+
+
+    function runTests() {
+        // Test 1: Simple Paragraph
+
+        const test1 = document.getElementById('test1');
+        const test1Result = htmlToSMD.convertElementToMarkdown(test1);
+        const test1Snippet = `convertElementToMarkdown(document.getElementById('test1'), true)`;
+        assertEqual(test1Result.trim(), "## Simple Paragraph\n\nThis is a simple paragraph.", "Test 1", test1Snippet);
+
+        // Test 2: Nested Elements
+        const test2 = document.getElementById('test2');
+        const test2Result = htmlToSMD.convertElementToMarkdown(test2);
+        const test2Snippet = `convertElementToMarkdown(document.getElementById('test2'), true)`;
+        assertEqual(test2Result.trim(), "## Nested Elements\n\n\n\n### Header inside a div", "Test 2", test2Snippet);
+
+        // Test 3: Unordered List
+        const test3Result = htmlToSMD.convertElementToMarkdown(document.getElementById('test3'));
+        const test3Snippet = `convertElementToMarkdown(document.getElementById('test3'), true)`;
+        assertEqual(test3Result.trim(), "## Unordered List\n\n\n- Item 1\n\n- Item 2\n\n- Item 3", "Test 3", test3Snippet);
+
+        // Test 4: Ordered List
+        const test4Result = htmlToSMD.convertElementToMarkdown(document.getElementById('test4'));
+        const test4Snippet = `convertElementToMarkdown(document.getElementById('test4'), true)`;
+        assertEqual(test4Result.trim(), "## Ordered List\n\n\n1. First Item\n\n2. Second Item\n\n3. Third Item", "Test 4", test4Snippet);
+
+        // Test 5: Special Elements (like <footer>)
+        const test5Result = htmlToSMD.convertElementToMarkdown(document.getElementById('test5'));
+        const test5Snippet = `convertElementToMarkdown(document.getElementById('test5'), true)`;
+        assertEqual(test5Result.trim(), "## Special Elements\n\n\n\n<-footer->\nThis is footer content\n\n</-footer->", "Test 5", test5Snippet);
+
+        // Test 6: Nested Heading and Unordered List
+        const test6Result = htmlToSMD.convertElementToMarkdown(document.getElementById('test6'));
+        const test6Snippet = `convertElementToMarkdown(document.getElementById('test6'))`;
+        const test6Expected = "###### Benefits for Sales\n\n\n- Onboarding and training\n\n- Share and curate knowledge of what works\n\n- Confidence and expertise in sales pitch and positioning\n\n- Increased sales success";
+        assertEqual(test6Result.trim(), test6Expected, "Test 6", test6Snippet);
+
+
+    }
+
+</script>
+
+<script>
+
+    function runTests() {
+        const testCases = document.querySelectorAll('.test-container');
+        testCases.forEach((testCase, index) => {
+            console.log(`Test ${index + 1}:`);
+            const markdown = htmlToSMD.convertElementToMarkdown(testCase, {refifyUrls: true});
+            console.log(markdown);
+            console.log('---');
+        });
+
+        // Test the full page conversion
+        console.log('Full Page Conversion:');
+        const fullPageMarkdown = htmlToSMD.convertHtmlToMarkdown(document.documentElement.outerHTML, {
+            extractMainContent: true,
+            refifyUrls: true
+        });
+        console.log(fullPageMarkdown);
+    }
+
+    // Run tests when the page loads
+    window.onload = runTests;
+</script>
+
+<textarea id="text1" style="display: none;"></textarea>
+<textarea id="text2" style="display: none;"></textarea>
+
+<!-- Visible container for diff output -->
+<div id="diffOutput"></div>
+</body>
+</html>

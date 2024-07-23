@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "start": "ts-node node-example.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "@types/jsdom": "^21.1.7",
+    "axios": "^1.7.2",
+    "commander": "^12.1.0",
+    "dom-to-semantic-markdown": "file:../../",
+    "jsdom": "^24.1.1",
+    "ts-node": "^10.9.2"
+  }
+}
