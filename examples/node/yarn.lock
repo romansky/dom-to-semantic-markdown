@@ -220,12 +220,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-to-semantic-markdown@npm:1.0.0":
-  version: 1.0.0
-  resolution: "dom-to-semantic-markdown@npm:1.0.0"
+"dom-to-semantic-markdown@npm:1.0.3":
+  version: 1.0.3
+  resolution: "dom-to-semantic-markdown@npm:1.0.3"
   dependencies:
     useful: "npm:^0.7.21"
-  checksum: 10c0/02be1a7e9cc19c77c6f9d40b4560ee196d87f6f815fb79c4d18af26a256809206d3cfd08d2a0f4a02114536392bb09f40563ea67bc0bb9582e97ed54c8116e0c
+  checksum: 10c0/42f32a28686ec84cec5725ff92092fe3f52d76783340d94c2b8150dc0eaee2b70f23f6bc457ca2f3b58e893f46804084baafcaaea7e74487acfcb8c83a8430aa
   languageName: node
   linkType: hard
 
@@ -424,7 +424,7 @@ __metadata:
     "@types/jsdom": "npm:^21.1.7"
     axios: "npm:^1.7.2"
     commander: "npm:^12.1.0"
-    dom-to-semantic-markdown: "npm:1.0.0"
+    dom-to-semantic-markdown: "npm:1.0.3"
     jsdom: "npm:^24.1.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.5.3"

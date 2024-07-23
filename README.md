@@ -1,6 +1,6 @@
 <h1 align="center">
     <img width="100" height="100" src="d2m_color.svg" alt=""><br>
-    Dom to Semantic Markdown
+    DOM to Semantic Markdown
 </h1>
 
 [![CI](https://github.com/romansky/dom-to-semantic-markdown/actions/workflows/ci.yml/badge.svg)](https://github.com/romansku/dom-to-semantic-markdown/actions/workflows/ci.yml)
@@ -11,7 +11,7 @@ Convert HTML DOM to Semantic Markdown for use in LLMs (Large Language Models).
 
 ## Table of Contents
 
-- [Why Dom to Semantic Markdown?](#why-dom-to-semantic-markdown)
+- [Why DOM to Semantic Markdown?](#why-dom-to-semantic-markdown)
 - [Features](#features)
 - [Semantic Format](#semantic-format)
 - [Use Cases](#use-cases)
@@ -22,9 +22,9 @@ Convert HTML DOM to Semantic Markdown for use in LLMs (Large Language Models).
 - [Contributing](#contributing)
 - [License](#license)
 
-## Why Dom to Semantic Markdown?
+## Why DOM to Semantic Markdown?
 
-Dom to Semantic Markdown addresses several key challenges in extracting web content for LLMs:
+DOM to Semantic Markdown addresses several key challenges in extracting web content for LLMs:
 
 1. **Maximizing Semantic Information**: Preserves the semantic structure of web content, unlike traditional HTML-to-text conversion.
 
@@ -46,7 +46,7 @@ Dom to Semantic Markdown addresses several key challenges in extracting web cont
 
 ## Semantic Format
 
-Dom to Semantic Markdown's format captures rich web content structure:
+DOM to Semantic Markdown's format captures rich web content structure:
 
 - Preserves HTML semantic tags (`<header>`, `<footer>`, `<nav>`, `<aside>`, etc.)
 - Captures image metadata (alt text, dimensions, etc.)
@@ -173,7 +173,7 @@ Converts an HTML Element to Semantic Markdown.
 
 ## Contributing
 
-Contributions to Dom to Semantic Markdown are welcome!
+Contributions to DOM to Semantic Markdown are welcome!
 
 ## License
 
