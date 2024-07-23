@@ -9,7 +9,7 @@
     "@types/jsdom": "^21.1.7",
     "axios": "^1.7.2",
     "commander": "^12.1.0",
-    "dom-to-semantic-markdown": "1.0.3",
+    "dom-to-semantic-markdown": "1.0.5",
     "jsdom": "^24.1.1",
     "ts-node": "^10.9.2"
   }
