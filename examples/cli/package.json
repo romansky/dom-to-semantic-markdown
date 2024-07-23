@@ -1,6 +1,6 @@
 {
   "name": "d2m",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Convert DOM to Semantic Markdown",
   "scripts": {
     "start": "ts-node cli-example.ts"
