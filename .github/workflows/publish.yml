@@ -32,14 +32,14 @@ jobs:
       - name: Build root project
         run: yarn build
 
-      - name: Install d2m dependencies
-        run: yarn install
-        working-directory: examples/cli
+      - name: Publish root project to npm
+        run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish root project to npm
-        run: yarn publish --access public
+      - name: Install d2m dependencies
+        run: yarn install
+        working-directory: examples/cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
