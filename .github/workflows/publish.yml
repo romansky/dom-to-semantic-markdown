@@ -11,7 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18.x, 22.x]
+        node-version: [ 18.x, 22.x ]
 
     steps:
       - uses: actions/checkout@v4
@@ -23,11 +23,32 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - run: corepack enable
-      - run: yarn install
+
+      - name: Install root project dependencies
+        run: yarn install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - run: yarn build
-      - name: Publish to npm
+
+      - name: Build root project
+        run: yarn build
+
+      - name: Install d2m dependencies
+        run: yarn install
+        working-directory: examples/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build d2m project
+        run: yarn build
+        working-directory: examples/cli
+
+      - name: Publish root project to npm
         run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish d2m to npm
+        run: yarn publish --access public
+        working-directory: examples/cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
