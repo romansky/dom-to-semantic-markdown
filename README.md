@@ -173,7 +173,7 @@ Converts an HTML Element to Semantic Markdown.
 
 ## Contributing
 
-Contributions to Dom to Semantic Markdown are welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) file for details on how to get started, our code of conduct, and the process for submitting pull requests.
+Contributions to Dom to Semantic Markdown are welcome!
 
 ## License
 
