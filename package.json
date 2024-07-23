@@ -27,6 +27,7 @@
     "rimraf": "^5.0.9",
     "rollup": "^4.19.0",
     "ts-jest": "^29.2.3",
+    "tslib": "^2.6.3",
     "typescript": "^5.5.3"
   },
   "dependencies": {
