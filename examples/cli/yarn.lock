@@ -134,6 +134,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axios@npm:^1.7.2":
+  version: 1.7.2
+  resolution: "axios@npm:1.7.2"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/cbd47ce380fe045313364e740bb03b936420b8b5558c7ea36a4563db1258c658f05e40feb5ddd41f6633fdd96d37ac2a76f884dad599c5b0224b4c451b3fa7ae
+  languageName: node
+  linkType: hard
+
 "combined-stream@npm:^1.0.8":
   version: 1.0.8
   resolution: "combined-stream@npm:1.0.8"
@@ -209,6 +220,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dom-to-markdown-cli@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "dom-to-markdown-cli@workspace:."
+  dependencies:
+    "@types/jsdom": "npm:^21.1.7"
+    axios: "npm:^1.7.2"
+    commander: "npm:^12.1.0"
+    dom-to-semantic-markdown: "npm:1.0.3"
+    jsdom: "npm:^24.1.1"
+    ts-node: "npm:^10.9.2"
+    typescript: "npm:^5.5.3"
+  bin:
+    d2m: ./d2m.js
+  languageName: unknown
+  linkType: soft
+
 "dom-to-semantic-markdown@npm:1.0.3":
   version: 1.0.3
   resolution: "dom-to-semantic-markdown@npm:1.0.3"
@@ -222,6 +249,16 @@ __metadata:
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 10c0/5b039739f7621f5d1ad996715e53d964035f75ad3b9a4d38c6b3804bb226e282ffeae2443624d8fdd9c47d8e926ae9ac009c54671243f0c3294c26af7cc85250
+  languageName: node
+  linkType: hard
+
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.6
+  resolution: "follow-redirects@npm:1.15.6"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 10c0/9ff767f0d7be6aa6870c82ac79cf0368cd73e01bbc00e9eb1c2a16fbb198ec105e3c9b6628bb98e9f3ac66fe29a957b9645bcb9a490bb7aa0d35f908b6b85071
   languageName: node
   linkType: hard
 
@@ -361,6 +398,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: 10c0/fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
+  languageName: node
+  linkType: hard
+
 "psl@npm:^1.1.33":
   version: 1.9.0
   resolution: "psl@npm:1.9.0"
@@ -388,19 +432,6 @@ __metadata:
   checksum: 10c0/b2bfdd09db16c082c4326e573a82c0771daaf7b53b9ce8ad60ea46aa6e30aaf475fe9b164800b89f93b748d2c234d8abff945d2551ba47bf5698e04cd7713267
   languageName: node
   linkType: hard
-
-"root-workspace-0b6124@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "root-workspace-0b6124@workspace:."
-  dependencies:
-    "@types/jsdom": "npm:^21.1.7"
-    commander: "npm:^12.1.0"
-    dom-to-semantic-markdown: "npm:1.0.3"
-    jsdom: "npm:^24.1.1"
-    ts-node: "npm:^10.9.2"
-    typescript: "npm:^5.5.3"
-  languageName: unknown
-  linkType: soft
 
 "rrweb-cssom@npm:^0.6.0":
   version: 0.6.0

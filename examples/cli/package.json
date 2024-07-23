@@ -1,12 +1,19 @@
 {
+  "name": "dom-to-markdown-cli",
+  "version": "1.0.0",
+  "description": "Convert DOM to Semantic Markdown",
   "scripts": {
     "start": "ts-node cli-example.ts"
+  },
+  "bin": {
+    "d2m": "./d2m.js"
   },
   "devDependencies": {
     "typescript": "^5.5.3"
   },
   "dependencies": {
     "@types/jsdom": "^21.1.7",
+    "axios": "^1.7.2",
     "commander": "^12.1.0",
     "dom-to-semantic-markdown": "1.0.3",
     "jsdom": "^24.1.1",

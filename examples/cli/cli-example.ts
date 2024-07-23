@@ -16,6 +16,7 @@ global.Node = {
 };
 
 import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
+import axios from 'axios';
 import fs from 'fs/promises';
 import {JSDOM} from 'jsdom';
 
@@ -25,16 +26,28 @@ program
     .option('-i, --input <file>', 'Input HTML file')
     .option('-o, --output <file>', 'Output Markdown file')
     .option('-e, --extract-main', 'Extract main content')
+    .option('-u, --url <url>', 'URL to fetch HTML content from')
     .parse(process.argv);
 
 const options = program.opts();
 
 async function main() {
-    const html = await fs.readFile(options.input, 'utf-8');
+    let html;
+    if (options.url) {
+        const response = await axios.get(options.url);
+        html = response.data;
+    } else if (options.input) {
+        html = await fs.readFile(options.input, 'utf-8');
+    } else {
+        console.error('Either an input file or a URL must be specified.');
+        process.exit(1);
+    }
+
     const markdown = convertHtmlToMarkdown(html, {
         extractMainContent: options.extractMain,
         overrideDOMParser: new (new JSDOM()).window.DOMParser()
     });
+
     if (options.output) {
         await fs.writeFile(options.output, markdown);
         console.log(`Markdown saved to ${options.output}`);
