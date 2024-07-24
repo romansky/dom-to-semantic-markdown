@@ -21,6 +21,7 @@ Convert HTML DOM to Semantic Markdown for use in LLMs (Large Language Models).
 - [Adding to an Existing Project](#adding-to-an-existing-project)
 - [API](#api)
 - [Contributing](#contributing)
+- [Example](#example)
 - [License](#license)
 
 ## Why DOM to Semantic Markdown?
