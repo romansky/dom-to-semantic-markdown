@@ -43,6 +43,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Build d2m project
+        run: yarn build
+        working-directory: examples/cli
+
       - name: Publish d2m to npm
         run: yarn publish --access public
         working-directory: examples/cli

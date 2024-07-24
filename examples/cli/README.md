@@ -31,7 +31,13 @@ cd examples/cli
 npm install
 ```
 
-3. Link the package globally:
+3. Build the project:
+
+```sh
+npm run build
+```
+
+4. Link the package globally:
 
 ```sh
 npm link
@@ -54,33 +60,33 @@ The `d2m` command converts HTML files or URL content to Markdown. Here are the a
 
 1. Convert an HTML file and print the result to the console:
 
-    ```sh
-    npx d2m@latest -i tryme.html
-    ```
+```sh
+npx d2m@latest -i tryme.html
+```
 
 2. Convert an HTML file and save the result to a Markdown file:
 
-    ```sh
-    npx d2m@latest -i tryme.html -o output.md
-    ```
+```sh
+npx d2m@latest -i tryme.html -o output.md
+```
 
 3. Extract the main content from the HTML file and print the result to the console:
 
-    ```sh
-    npx d2m@latest -i tryme.html -e
-    ```
+```sh
+npx d2m@latest -i tryme.html -e
+```
 
 4. Convert HTML content from a URL and print the result to the console:
 
-    ```sh
-    npx d2m@latest -u https://example.com
-    ```
+```sh
+npx d2m@latest -u https://example.com
+```
 
 5. Convert HTML content from a URL and save the result to a Markdown file:
 
-    ```sh
-    npx d2m@latest -u https://example.com -o output.md
-    ```
+```sh
+npx d2m@latest -u https://example.com -o output.md
+```
 
 #### Using Globally Installed CLI
 

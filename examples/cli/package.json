@@ -2,10 +2,14 @@
   "name": "d2m",
   "version": "1.0.8",
   "description": "Convert DOM to Semantic Markdown",
+  "main": "dist/cli-example.js",
   "scripts": {
+    "build": "tsc",
     "start": "node d2m.js"
   },
-  "bin": "./d2m.js",
+  "bin": {
+    "d2m": "d2m.js"
+  },
   "devDependencies": {
     "typescript": "^5.5.3"
   },
