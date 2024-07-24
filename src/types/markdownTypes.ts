@@ -41,6 +41,7 @@ export type ListElement = {
 export type TableCell = {
     type: 'tableCell';
     content: string | SemanticMarkdownAST[];
+    colId?: string; // Add column ID to TableCell
 };
 export type TableRow = {
     type: 'tableRow';
@@ -49,6 +50,7 @@ export type TableRow = {
 export type TableElement = {
     type: 'table';
     rows: TableRow[];
+    colIds?: string[]; // Add column IDs to TableElement
 };
 // Define code elements
 export type CodeElement = {
@@ -99,4 +101,5 @@ export interface ConversionOptions {
     urlMap?: Record<string, string>;
     debug?: boolean;
     overrideDOMParser?: DOMParser;
+    enableTableColumnTracking?: boolean;
 }

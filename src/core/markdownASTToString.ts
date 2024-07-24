@@ -81,7 +81,13 @@ export function markdownASTToString(elements: SemanticMarkdownAST[], indentLevel
             case 'table':
                 element.rows.forEach((row) => {
                     row.cells.forEach((cell) => {
-                        markdownString += `| ${typeof cell.content === 'string' ? cell.content : markdownASTToString(cell.content, indentLevel + 1).trim()} `;
+                        let cellContent = typeof cell.content === 'string'
+                            ? cell.content
+                            : markdownASTToString(cell.content, indentLevel + 1).trim();
+                        if (cell.colId) {
+                            cellContent += ' ' + `<!-- ${cell.colId} -->`
+                        }
+                        markdownString += `| ${cellContent} `;
                     });
                     markdownString += '|\n';
                 });

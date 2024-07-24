@@ -96,6 +96,29 @@ describe('HTML to Markdown conversion', () => {
         expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim()).toBe(expected);
     });
 
+    test('converts tables with corelative ids', () => {
+        const html = `
+      <table>
+        <thead>
+          <tr><th>Header 1</th><th>Header 2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr>
+          <tr><td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr>
+        </tbody>
+      </table>
+    `;
+        const expected =
+            '| Header 1 <!-- col-0 --> | Header 2 <!-- col-1 --> |\n' +
+            '| --- | --- |\n' +
+            '| Row 1, Cell 1 <!-- col-0 --> | Row 1, Cell 2 <!-- col-1 --> |\n' +
+            '| Row 2, Cell 1 <!-- col-0 --> | Row 2, Cell 2 <!-- col-1 --> |';
+        expect(convertHtmlToMarkdown(html, {
+            enableTableColumnTracking: true,
+            overrideDOMParser: new dom.window.DOMParser()}
+        ).trim()).toBe(expected);
+    });
+
     test('converts nested structures', () => {
         const html = `
       <div>

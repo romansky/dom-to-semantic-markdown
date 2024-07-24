@@ -27,6 +27,7 @@ program
     .option('-o, --output <file>', 'Output Markdown file')
     .option('-e, --extract-main', 'Extract main content')
     .option('-u, --url <url>', 'URL to fetch HTML content from')
+    .option('-t, --track-table-columns', 'Enable table column tracking for improved LLM data correlation')
     .parse(process.argv);
 
 const options = program.opts();
@@ -45,7 +46,8 @@ async function main() {
 
     const markdown = convertHtmlToMarkdown(html, {
         extractMainContent: options.extractMain,
-        overrideDOMParser: new (new JSDOM()).window.DOMParser()
+        overrideDOMParser: new (new JSDOM()).window.DOMParser(),
+        enableTableColumnTracking: options.trackTableColumns,
     });
 
     if (options.output) {

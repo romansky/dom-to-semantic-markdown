@@ -53,6 +53,7 @@ The `d2m` command converts HTML files or URL content to Markdown. Here are the a
 - `-o, --output <file>`: Output Markdown file (if not specified, the result will be printed to the console)
 - `-e, --extract-main`: Extract main content (optional)
 - `-u, --url <url>`: URL to fetch HTML content from
+- `-t, --track-table-columns`: Enable table column tracking for improved LLM data correlation
 
 ### Examples
 
@@ -86,6 +87,12 @@ npx d2m@latest -u https://example.com
 
 ```sh
 npx d2m@latest -u https://example.com -o output.md
+```
+
+6. Convert an HTML file with table column tracking:
+
+```sh
+npx d2m@latest -i tryme.html -t
 ```
 
 #### Using Globally Installed CLI

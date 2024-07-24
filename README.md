@@ -44,6 +44,21 @@ DOM to Semantic Markdown addresses several key challenges in extracting web cont
 - URL refification for token optimization
 - Customizable conversion options
 - Browser and Node.js support
+- Table column tracking for enhanced LLM processing capabilities
+
+## Advanced Features
+
+### Table Column Tracking
+
+When dealing with tables, especially those with numerous columns containing similar data types, LLMs may struggle to correlate cells with their respective columns. The `enableTableColumnTracking` option (or `--track-table-columns` in CLI) adds unique identifiers to each column, significantly improving an LLM's ability to understand table structure and correlate data across rows.
+
+Example output with column tracking enabled:
+
+| Header 1 <!-- col-0 --> | Header 2 <!-- col-1 --> |
+|-------------------------|-------------------------|
+| Data 1 <!-- col-0 -->   | Data 2 <!-- col-1 -->   |
+
+This feature is particularly useful for complex tables or when precise column identification is crucial for downstream LLM tasks.
 
 ## Semantic Format
 
@@ -259,6 +274,7 @@ Converts an HTML Element to Semantic Markdown.
 - `refifyUrls?: boolean`: Whether to convert URLs to reference-style links.
 - `debug?: boolean`: Enable debug logging.
 - `overrideDOMParser?: DOMParser`: Custom DOMParser for Node.js environments.
+- `enableTableColumnTracking?: boolean`: Adds unique identifiers to table columns, enhancing LLM's ability to correlate data across rows.
 
 ## Example
 

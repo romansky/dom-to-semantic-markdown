@@ -100,14 +100,25 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                 result.push({type: 'text', content: '\n'});
             } else if (elem.tagName.toLowerCase() === 'table') {
                 debugLog("Table");
+
+                let colIds: string[] = []
+
+                if (options?.enableTableColumnTracking) {
+                    // Generate unique column IDs
+                    const headerCells = Array.from(elem.querySelectorAll('th'));
+                    headerCells.forEach((_, index) => {
+                        colIds.push(`col-${index}`);
+                    });
+                }
                 const tableRows = Array.from(elem.querySelectorAll('tr'));
                 const markdownTableRows = tableRows.map(row => {
-                    const cells = Array.from(row.querySelectorAll('th, td')).map(cell => {
+                    const cells = Array.from(row.querySelectorAll('th, td')).map((cell, columnIndex) => {
                         return {
                             type: 'tableCell' as const,
                             content: cell.nodeType === Node.TEXT_NODE
                                 ? escapeMarkdownCharacters(cell.textContent?.trim() ?? '')
                                 : htmlToMarkdownAST(cell, options, indentLevel + 1),
+                            colId: colIds[columnIndex] as string | undefined
                         };
                     });
                     return {type: 'tableRow' as const, cells};
@@ -119,13 +130,16 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     if (hasHeaders) {
                         // Create a header separator row
                         const headerSeparatorCells = Array.from(tableRows[0].querySelectorAll('th, td'))
-                            .map(() => ({type: 'tableCell' as const, content: '---'}));
-                        const headerSeparatorRow = {type: 'tableRow' as const, cells: headerSeparatorCells};
+                            .map(() => ({type: 'tableCell' as const, content: '---', colId: undefined}));
+                        const headerSeparatorRow = {
+                            type: 'tableRow' as const, cells: headerSeparatorCells
+                        };
                         markdownTableRows.splice(1, 0, headerSeparatorRow);
                     }
                 }
 
-                result.push({type: 'table', rows: markdownTableRows});
+
+                result.push({type: 'table', rows: markdownTableRows, colIds});
             } else {
                 const content = escapeMarkdownCharacters(elem.textContent || '');
                 switch (elem.tagName.toLowerCase()) {
