@@ -223,7 +223,7 @@ const {JSDOM} = jsdom;
 
 const html = '<h1>Hello, World!</h1><p>This is a <strong>test</strong>.</p>';
 const dom = new JSDOM(html);
-const markdown = convertHtmlToMarkdown(html, {overrideDOMParser: dom.window.DOMParser});
+const markdown = convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()});
 console.log(markdown);
 ```
 
@@ -249,7 +249,7 @@ const {JSDOM} = jsdom;
 
 const html = '<h1>Hello, World!</h1><p>This is a <strong>test</strong>.</p>';
 const dom = new JSDOM(html);
-const markdown = convertHtmlToMarkdown(html, {overrideDOMParser: dom.window.DOMParser});
+const markdown = convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()});
 
 console.log(markdown);
 // Output:
