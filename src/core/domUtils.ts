@@ -1,124 +1,167 @@
+const enableDebug = false;
+const debugMessage = (message: string) => {
+    if (enableDebug) {
+        console.log(message);
+    }
+};
+
 /**
  * Attempts to find the main content of a web page.
  * @param document The Document object to search.
  * @returns The Element containing the main content, or the body if no main content is found.
  */
 export function findMainContent(document: Document): Element {
+    debugMessage('Entering findMainContent function');
 
     const mainElement = document.querySelector('main');
     if (mainElement) {
+        debugMessage('Existing <main> element found');
         return mainElement;
     }
 
-    const articleElement = document.querySelector('article');
-    if (articleElement) {
-        return articleElement;
+    debugMessage('No <main> element found. Detecting main content.');
+    if (!document.body) {
+        debugMessage('No body element found, returning document.documentElement');
+        return document.documentElement;
     }
-
-    // If no semantic tags are found, use a scoring system
-    return findContentByScoring(document.body);
+    return detectMainContent(document.body);
 }
 
-
 export function wrapMainContent(mainContentElement: Element, document: Document) {
-    const mainElement = document.querySelector('main');
-    const articleElement = document.querySelector('article');
-
-    if (!mainElement && !articleElement) {
+    if (mainContentElement.tagName.toLowerCase() !== 'main') {
+        debugMessage('Wrapping main content in <main> element');
         const mainElement: HTMLElement = document.createElement('main');
         mainContentElement.before(mainElement);
         mainElement.appendChild(mainContentElement);
-        mainElement.id = 'wrapped-main-content';
+        mainElement.id = 'detected-main-content';
+        debugMessage('Main content wrapped successfully');
+    } else {
+        debugMessage('Main content already wrapped');
     }
 }
 
-/**
- * Finds the element most likely to contain the main content using a scoring system.
- * @param rootElement The root element to start the search from.
- * @returns The element with the highest score.
- */
-function findContentByScoring(rootElement: Element): Element {
-    let bestElement = rootElement;
-    let bestScore = scoreElement(rootElement);
+function detectMainContent(rootElement: Element): Element {
+    const candidates: Element[] = [];
+    const minScore = 20;
+    console.log("ZZZ", candidates)
+    debugMessage(`Collecting candidates with minimum score: ${minScore}`);
+    collectCandidates(rootElement, candidates, minScore);
 
-    function traverse(element: Element) {
-        const score = scoreElement(element);
-        if (score > bestScore) {
-            bestScore = score;
-            bestElement = element;
+    debugMessage(`Total candidates found: ${candidates.length}`);
+
+    if (candidates.length === 0) {
+        debugMessage('No suitable candidates found, returning root element');
+        return rootElement;
+    }
+
+    candidates.sort((a, b) => calculateScore(b) - calculateScore(a));
+    debugMessage('Candidates sorted by score');
+
+    let bestIndependentCandidate = candidates[0];
+    for (let i = 1; i < candidates.length; i++) {
+        if (!candidates.some((otherCandidate, j) => j !== i && otherCandidate.contains(candidates[i]))) {
+            if (calculateScore(candidates[i]) > calculateScore(bestIndependentCandidate)) {
+                bestIndependentCandidate = candidates[i];
+                debugMessage(`New best independent candidate found: ${elementToString(bestIndependentCandidate)}`);
+            }
         }
-
-        // Use children instead of childNodes and ensure we're only dealing with Elements
-        Array.from(element.children).forEach((child: Element) => {
-            traverse(child);
-        });
-
     }
 
-    traverse(rootElement);
-    return bestElement;
+    debugMessage(`Final main content candidate: ${elementToString(bestIndependentCandidate)}`);
+    return bestIndependentCandidate;
 }
 
-/**
- * Scores an element based on its likelihood of containing main content.
- * @param element The element to score.
- * @returns A numerical score.
- */
-function scoreElement(element: Element): number {
+function elementToString(element: Element | null | undefined): string {
+    if (!element) {
+        return 'No element';
+    }
+    return `${element.tagName}#${element.id || 'no-id'}.${Array.from(element.classList).join('.')}`;
+}
+
+function collectCandidates(element: Element, candidates: Element[], minScore: number) {
+    const score = calculateScore(element);
+    if (score >= minScore) {
+        candidates.push(element);
+        debugMessage(`Candidate found: ${elementToString(element)}, score: ${score}`);
+    }
+
+    Array.from(element.children).forEach(child => {
+        collectCandidates(child, candidates, minScore);
+    });
+}
+
+function calculateScore(element: Element): number {
     let score = 0;
+    let scoreLog: string[] = [];
 
-    // Prefer certain IDs and classes
-    const idAndClass = (element.id + ' ' + element.className).toLowerCase();
-    if (/(^|\s)(content|main|article)($|\s)/i.test(idAndClass)) {
-        score += 30;
-    }
-    if (/(^|\s)(sidebar|menu|nav|footer|header)($|\s)/i.test(idAndClass)) {
-        score -= 30;
-    }
-
-    // Prefer certain tags
-    switch (element.tagName.toLowerCase()) {
-        case 'div':
-        case 'section':
-            score += 5;
-            break;
-        case 'p':
-        case 'h1':
-        case 'h2':
-        case 'h3':
-            score += 3;
-            break;
-        case 'nav':
-        case 'sidebar':
-        case 'footer':
-        case 'header':
-            score -= 10;
-            break;
-    }
-
-    // Prefer elements with more text
-    const text = element.textContent || '';
-    score += Math.min(Math.floor(text.length / 100), 20);
-
-    // Prefer elements with fewer links relative to their text content
-    const links = element.getElementsByTagName('a');
-    if (text.length > 0) {
-        const linkDensity = links.length / text.length;
-        if (linkDensity < 0.1) {
+    // High impact attributes
+    const highImpactAttributes = ['article', 'content', 'main-container', 'main', 'main-content'];
+    highImpactAttributes.forEach(attr => {
+        if (element.classList.contains(attr) || element.id.includes(attr)) {
             score += 10;
-        } else if (linkDensity > 0.5) {
-            score -= 10;
+            scoreLog.push(`High impact attribute found: ${attr}, score increased by 10`);
         }
+    });
+
+    // High impact tags
+    const highImpactTags = ['article', 'main', 'section'];
+    if (highImpactTags.includes(element.tagName.toLowerCase())) {
+        score += 5;
+        scoreLog.push(`High impact tag found: ${element.tagName}, score increased by 5`);
+    }
+
+    // Paragraph count
+    const paragraphCount = element.getElementsByTagName('p').length;
+    const paragraphScore = Math.min(paragraphCount, 5);
+    if (paragraphScore > 0) {
+        score += paragraphScore;
+        scoreLog.push(`Paragraph count: ${paragraphCount}, score increased by ${paragraphScore}`);
+    }
+
+    // Text content length
+    const textContentLength = element.textContent?.trim().length || 0;
+    if (textContentLength > 200) {
+        const textScore = Math.min(Math.floor(textContentLength / 200), 5);
+        score += textScore;
+        scoreLog.push(`Text content length: ${textContentLength}, score increased by ${textScore}`);
+    }
+
+    // Link density
+    const linkDensity = calculateLinkDensity(element);
+    if (linkDensity < 0.3) {
+        score += 5;
+        scoreLog.push(`Link density: ${linkDensity.toFixed(2)}, score increased by 5`);
+    }
+
+    // Data attributes
+    if (element.hasAttribute('data-main') || element.hasAttribute('data-content')) {
+        score += 10;
+        scoreLog.push('Data attribute for main content found, score increased by 10');
+    }
+
+    // Role attribute
+    if (element.getAttribute('role')?.includes('main')) {
+        score += 10;
+        scoreLog.push('Role attribute indicating main content found, score increased by 10');
+    }
+
+    if (scoreLog.length > 0) {
+        debugMessage(`Scoring for ${elementToString(element)}:`);
+        scoreLog.forEach(log => debugMessage('  ' + log));
+        debugMessage(`  Final score: ${score}`);
     }
 
     return score;
 }
 
-/**
- * Checks if an element is visible.
- * @param element The element to check.
- * @returns True if the element is visible, false otherwise.
- */
+function calculateLinkDensity(element: Element): number {
+    const linkLength = Array.from(element.getElementsByTagName('a'))
+        .reduce((sum, link) => sum + (link.textContent?.length || 0), 0);
+    const textLength = element.textContent?.length || 1; // Avoid division by zero
+    return linkLength / textLength;
+}
+
+
 export function isElementVisible(element: Element): boolean {
     if (!(element instanceof HTMLElement)) {
         return true; // Non-HTMLElements are considered visible
@@ -128,22 +171,17 @@ export function isElementVisible(element: Element): boolean {
     return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
 }
 
-/**
- * Gets the text content of an element, excluding hidden elements.
- * @param element The element to get text from.
- * @returns The visible text content of the element.
- */
 export function getVisibleText(element: Element): string {
     if (!isElementVisible(element)) {
         return '';
     }
 
     let text = '';
-    for (const child of Array.from(element.children)) {
+    for (const child of Array.from(element.childNodes)) {
         if (child.nodeType === Node.TEXT_NODE) {
             text += child.textContent;
         } else if (child.nodeType === Node.ELEMENT_NODE) {
-            text += getVisibleText(child);
+            text += getVisibleText(child as Element);
         }
     }
 

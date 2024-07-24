@@ -72,8 +72,9 @@ DOM to Semantic Markdown's format captures rich web content structure:
 - Facilitates advanced filtering, restructuring, and content transformation.
 
 Example:
+
 ```javascript
-import { htmlToMarkdownAST, findInMarkdownAST } from 'dom-to-semantic-markdown';
+import {htmlToMarkdownAST, findInMarkdownAST} from 'dom-to-semantic-markdown';
 
 const html = '<div><h1>Title</h1><p>Content</p></div>';
 const ast = htmlToMarkdownAST(html);
@@ -88,11 +89,12 @@ console.log(headingNode); // { type: 'heading', level: 1, content: 'Title' }
 - Preserves link information while reducing token count.
 
 Example:
+
 ```javascript
-import { convertHtmlToMarkdown } from 'dom-to-semantic-markdown';
+import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
 
 const html = '<a href="https://example.com/very/long/url">Link</a>';
-const markdown = convertHtmlToMarkdown(html, { refifyUrls: true });
+const markdown = convertHtmlToMarkdown(html, {refifyUrls: true});
 console.log(markdown);
 // Output: [Link](ref1)
 // ref1: https://example.com/very/long/url
@@ -104,15 +106,16 @@ console.log(markdown);
 - Focuses on relevant information, excluding boilerplate content when not needed.
 
 Example:
+
 ```javascript
-import { convertHtmlToMarkdown } from 'dom-to-semantic-markdown';
+import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
 
 const html = `
   <header>Site Header</header>
   <main><h1>Main Content</h1><p>Important stuff.</p></main>
   <footer>Site Footer</footer>
 `;
-const markdown = convertHtmlToMarkdown(html, { extractMainContent: true });
+const markdown = convertHtmlToMarkdown(html, {extractMainContent: true});
 console.log(markdown);
 // Output: # Main Content
 //
@@ -147,33 +150,64 @@ Options:
 ### Adding to Existing Project
 
 ```bash
-npm install -g dom-to-semantic-markdown
+npm install dom-to-semantic-markdown
 ```
+
+### Global Installation
+
+To install the CLI tool globally, use the following commands:
+
+1. Clone the repository:
+
+    ```sh
+    git clone https://github.com/romansky/dom-to-semantic-markdown.git
+    cd examples/cli
+    ```
+
+2. Install dependencies:
+
+    ```sh
+    npm install
+    ```
+
+3. Build the project:
+
+    ```sh
+    npm run build
+    ```
+
+4. Link the package globally:
+
+    ```sh
+    npm link
+    ```
+
+After linking the package globally, you can use the `d2m` command anywhere on your system.
 
 ## Usage
 
 ### Browser
 
 ```javascript
-import { convertHtmlToMarkdown } from 'dom-to-semantic-markdown';
+import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
 
 const html = '<h1>Hello, World!</h1><p>This is a <strong>test</strong>.</p>';
 const markdown = convertHtmlToMarkdown(html);
 console.log(markdown);
 ```
 
-[full browser example](./examples/browser.html) 
+[full browser example](./examples/browser.html)
 
 ### Node.js
 
 ```javascript
-const { convertHtmlToMarkdown } = require('dom-to-semantic-markdown');
+const {convertHtmlToMarkdown} = require('dom-to-semantic-markdown');
 const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+const {JSDOM} = jsdom;
 
 const html = '<h1>Hello, World!</h1><p>This is a <strong>test</strong>.</p>';
 const dom = new JSDOM(html);
-const markdown = convertHtmlToMarkdown(html, { overrideDOMParser: dom.window.DOMParser });
+const markdown = convertHtmlToMarkdown(html, {overrideDOMParser: dom.window.DOMParser});
 console.log(markdown);
 ```
 
@@ -192,13 +226,14 @@ npm add dom-to-semantic-markdown
 2. Import and use it in your project:
 
 ```javascript
-import { convertHtmlToMarkdown } from 'dom-to-semantic-markdown';
+import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
 import jsdom from 'jsdom';
-const { JSDOM } = jsdom;
+
+const {JSDOM} = jsdom;
 
 const html = '<h1>Hello, World!</h1><p>This is a <strong>test</strong>.</p>';
 const dom = new JSDOM(html);
-const markdown = convertHtmlToMarkdown(html, { overrideDOMParser: dom.window.DOMParser });
+const markdown = convertHtmlToMarkdown(html, {overrideDOMParser: dom.window.DOMParser});
 
 console.log(markdown);
 // Output:
@@ -224,6 +259,63 @@ Converts an HTML Element to Semantic Markdown.
 - `refifyUrls?: boolean`: Whether to convert URLs to reference-style links.
 - `debug?: boolean`: Enable debug logging.
 - `overrideDOMParser?: DOMParser`: Custom DOMParser for Node.js environments.
+
+## Example
+
+<details>
+<summary>Convert XKCD homepage to Markdown</summary>
+
+```sh
+npx d2m@latest -u https://xkcd.com -o xkcd.md
+```
+
+<details>
+<summary>Click to view the converted Markdown</summary>
+
+```markdown
+- [Archive](/archive)
+- [What If?](https://what-if.xkcd.com/)
+- [About](/about)
+- [Feed](/atom.xml)   • [Email](/newsletter/)
+- [TW](https://twitter.com/xkcd/)   • [FB](https://www.facebook.com/TheXKCD/)   • [IG](https://www.instagram.com/xkcd/)
+- [-Books-](/books/)
+- [What If? 2](/what-if-2/)
+- [WI?](/what-if/)   • [TE](/thing-explainer/)   • [HT](/how-to/)
+
+<a href="/">![xkcd.com logo](/s/0b7742.png)</a> A webcomic of romance,
+sarcasm, math, and language. [Special 10th anniversary edition of WHAT IF?](https://xkcd.com/what-if/) —revised and annotated with brand-new illustrations and answers to important questions you never thought to ask—coming from November 2024. Preorder [here](https://bit.ly/WhatIf10th) ! President Venn Diagram
+- [|<](/1/)
+- [< Prev](/2961/)
+- [Random](//c.xkcd.com/random/comic/)
+- [Next >](about:blank#)
+- [>|](/)
+
+![President Venn Diagram](//imgs.xkcd.com/comics/president_venn_diagram.png)
+- [|<](/1/)
+- [< Prev](/2961/)
+- [Random](//c.xkcd.com/random/comic/)
+- [Next >](about:blank#)
+- [>|](/)
+
+
+Permanent link to this comic: [https://xkcd.com/2962/](https://xkcd.com/2962)
+Image URL (for hotlinking/embedding): [https://imgs.xkcd.com/comics/president_venn_diagram.png](https://imgs.xkcd.com/comics/president_venn_diagram.png)![Selected Comics](//imgs.xkcd.com/s/a899e84.jpg)
+<a href="//xkcd.com/1732/">![Earth temperature timeline](//imgs.xkcd.com/s/temperature.png)</a>
+[RSS Feed](/rss.xml) - [Atom Feed](/atom.xml) - [Email](/newsletter/)
+Comics I enjoy:
+[Three Word Phrase](http://threewordphrase.com/) , [SMBC](https://www.smbc-comics.com/) , [Dinosaur Comics](https://www.qwantz.com/) , [Oglaf](https://oglaf.com/) (nsfw), [A Softer World](https://www.asofterworld.com/) , [Buttersafe](https://buttersafe.com/) , [Perry Bible Fellowship](https://pbfcomics.com/) , [Questionable Content](https://questionablecontent.net/) , [Buttercup Festival](http://www.buttercupfestival.com/) , [Homestuck](https://www.homestuck.com/) , [Junior Scientist Power Hour](https://www.jspowerhour.com/)
+Other things:
+[Tips on technology and government](https://medium.com/civic-tech-thoughts-from-joshdata/so-you-want-to-reform-democracy-7f3b1ef10597) ,
+[Climate FAQ](https://www.nytimes.com/interactive/2017/climate/what-is-climate-change.html) , [Katharine Hayhoe](https://twitter.com/KHayhoe)
+xkcd.com is best viewed with Netscape Navigator 4.0 or below on a Pentium 3±1 emulated in Javascript on an Apple IIGS
+at a screen resolution of 1024x1. Please enable your ad blockers, disable high-heat drying, and remove your device
+from Airplane Mode and set it to Boat Mode. For security reasons, please leave caps lock on while browsing. This work is licensed under a [Creative Commons Attribution-NonCommercial 2.5 License](https://creativecommons.org/licenses/by-nc/2.5/).
+
+This means you're free to copy and share these comics (but not to sell them). [More details](/license.html).
+```
+
+</details>
+</details>
 
 ## Contributing
 

@@ -131,7 +131,7 @@ describe('HTML to Markdown conversion', () => {
     });
 
     test('respects conversion options', () => {
-        const html = '<div id="content"><p>Main content</p></div><div id="sidebar"><p>Sidebar</p></div>';
+        const html = '<div id="content" role="main"><p>Main content</p></div><div id="sidebar"><p>Sidebar</p></div>';
         const options: ConversionOptions = {
             extractMainContent: true,
             overrideDOMParser: new dom.window.DOMParser()
