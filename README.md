@@ -54,9 +54,9 @@ When dealing with tables, especially those with numerous columns containing simi
 
 Example output with column tracking enabled:
 
-| Header 1 <!-- col-0 --> | Header 2 <!-- col-1 --> |
-|-------------------------|-------------------------|
-| Data 1 <!-- col-0 -->   | Data 2 <!-- col-1 -->   |
+| Header 1 \<!-- col-0 --> | Header 2 \<!-- col-1 --> |
+|--------------------------|--------------------------|
+| Data 1 \<!-- col-0 -->   | Data 2 \<!-- col-1 -->   |
 
 This feature is particularly useful for complex tables or when precise column identification is crucial for downstream LLM tasks.
 
