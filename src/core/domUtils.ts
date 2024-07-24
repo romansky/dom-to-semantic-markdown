@@ -43,7 +43,6 @@ export function wrapMainContent(mainContentElement: Element, document: Document)
 function detectMainContent(rootElement: Element): Element {
     const candidates: Element[] = [];
     const minScore = 20;
-    console.log("ZZZ", candidates)
     debugMessage(`Collecting candidates with minimum score: ${minScore}`);
     collectCandidates(rootElement, candidates, minScore);
 
