@@ -1,6 +1,6 @@
 {
   "name": "d2m",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Convert DOM to Semantic Markdown",
   "scripts": {
     "start": "node d2m.js"
@@ -13,7 +13,7 @@
     "@types/jsdom": "^21.1.7",
     "axios": "^1.7.2",
     "commander": "^12.1.0",
-    "dom-to-semantic-markdown": "1.0.7",
+    "dom-to-semantic-markdown": "1.0.8",
     "jsdom": "^24.1.1",
     "ts-node": "^10.9.2"
   }
