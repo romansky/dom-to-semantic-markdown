@@ -18,6 +18,7 @@ Convert HTML DOM to Semantic Markdown for use in LLMs (Large Language Models).
 - [Tools](#tools)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Adding to an Existing Project](#adding-to-an-existing-project)
 - [API](#api)
 - [Contributing](#contributing)
 - [License](#license)
@@ -120,8 +121,33 @@ console.log(markdown);
 
 ## Installation
 
+### Using `npx`
+
+You can use the tool directly with `npx` without needing to install it globally:
+
+```sh
+> npx d2m@latest -h
+Usage: d2m [options]
+
+Convert DOM to Semantic Markdown
+
+Options:
+  -V, --version        output the version number
+  -i, --input <file>   Input HTML file
+  -o, --output <file>  Output Markdown file
+  -e, --extract-main   Extract main content
+  -u, --url <url>      URL to fetch HTML content from
+  -h, --help           display help for command
+
+> npx d2m@latest -i tryme.html -o output.md
+```
+
+[See more `npx` examples in the cli readme](./examples/cli/README.md)
+
+### Adding to Existing Project
+
 ```bash
-npm install dom-to-semantic-markdown
+npm install -g dom-to-semantic-markdown
 ```
 
 ## Usage
@@ -152,6 +178,34 @@ console.log(markdown);
 ```
 
 [full node example](./examples/node)
+
+## Adding to an Existing Project
+
+To add `dom-to-semantic-markdown` to your existing project, follow these steps:
+
+1. Install the library:
+
+```sh
+npm add dom-to-semantic-markdown
+```
+
+2. Import and use it in your project:
+
+```javascript
+import { convertHtmlToMarkdown } from 'dom-to-semantic-markdown';
+import jsdom from 'jsdom';
+const { JSDOM } = jsdom;
+
+const html = '<h1>Hello, World!</h1><p>This is a <strong>test</strong>.</p>';
+const dom = new JSDOM(html);
+const markdown = convertHtmlToMarkdown(html, { overrideDOMParser: dom.window.DOMParser });
+
+console.log(markdown);
+// Output:
+// # Hello, World!
+// 
+// This is a **test**.
+```
 
 ## API
 

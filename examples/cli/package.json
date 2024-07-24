@@ -3,7 +3,7 @@
   "version": "1.0.7",
   "description": "Convert DOM to Semantic Markdown",
   "scripts": {
-    "start": "ts-node cli-example.ts"
+    "start": "node d2m.js"
   },
   "bin": "./d2m.js",
   "devDependencies": {

@@ -4,13 +4,25 @@ A command-line tool to convert HTML DOM to Semantic Markdown.
 
 ## Installation
 
+To use the CLI tool with `npx` or install it globally, follow these instructions:
+
+### Using `npx`
+
+You can use the tool directly with `npx` without needing to install it globally:
+
+```sh
+npx d2m@latest -i tryme.html -o output.md
+```
+
+### Global Installation
+
 To install the CLI tool globally, use the following commands:
 
 1. Clone the repository:
 
 ```sh
-https://github.com/romansky/dom-to-semantic-markdown.git
-cd cd examples/cli
+git clone https://github.com/romansky/dom-to-semantic-markdown.git
+cd examples/cli
 ```
 
 2. Install dependencies:
@@ -37,6 +49,40 @@ The `d2m` command converts HTML files or URL content to Markdown. Here are the a
 - `-u, --url <url>`: URL to fetch HTML content from
 
 ### Examples
+
+#### Using `npx`
+
+1. Convert an HTML file and print the result to the console:
+
+    ```sh
+    npx d2m@latest -i tryme.html
+    ```
+
+2. Convert an HTML file and save the result to a Markdown file:
+
+    ```sh
+    npx d2m@latest -i tryme.html -o output.md
+    ```
+
+3. Extract the main content from the HTML file and print the result to the console:
+
+    ```sh
+    npx d2m@latest -i tryme.html -e
+    ```
+
+4. Convert HTML content from a URL and print the result to the console:
+
+    ```sh
+    npx d2m@latest -u https://example.com
+    ```
+
+5. Convert HTML content from a URL and save the result to a Markdown file:
+
+    ```sh
+    npx d2m@latest -u https://example.com -o output.md
+    ```
+
+#### Using Globally Installed CLI
 
 1. Convert an HTML file and print the result to the console:
 
