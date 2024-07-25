@@ -1,6 +1,6 @@
 {
   "name": "dom-to-semantic-markdown",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "DOM to Semantic-Markdown for use in LLMs",
   "main": "./dist/node/index.js",
   "types": "./dist/node/index.d.ts",
