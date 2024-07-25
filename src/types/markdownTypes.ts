@@ -1,98 +1,103 @@
-export type BoldElement = {
+export type BoldNode = {
     type: 'bold';
     content: string;
 };
-export type ItalicElement = {
+export type ItalicNode = {
     type: 'italic';
     content: string;
 };
-export type StrikethroughElement = {
+export type StrikethroughNode = {
     type: 'strikethrough';
     content: string;
 };
 // Define heading levels
-export type HeadingElement = {
+export type HeadingNode = {
     type: 'heading';
     level: 1 | 2 | 3 | 4 | 5 | 6;
     content: string;
 };
 // Define links and images
-export type LinkElement = {
+export type LinkNode = {
     type: 'link';
     href: string;
     content: SemanticMarkdownAST[];
 };
-export type ImageElement = {
+export type ImageNode = {
     type: 'image';
     src: string;
     alt?: string;
 };
 // Define lists
-export type ListItem = {
+export type ListItemNode = {
     type: 'listItem';
     content: SemanticMarkdownAST[];
 };
-export type ListElement = {
+export type ListNode = {
     type: 'list';
     ordered: boolean;
-    items: ListItem[];
+    items: ListItemNode[];
 };
 // Define tables
-export type TableCell = {
+export type TableCellNode = {
     type: 'tableCell';
     content: string | SemanticMarkdownAST[];
     colId?: string; // Add column ID to TableCell
 };
-export type TableRow = {
+export type TableRowNode = {
     type: 'tableRow';
-    cells: TableCell[];
+    cells: TableCellNode[];
 };
-export type TableElement = {
+export type TableNode = {
     type: 'table';
-    rows: TableRow[];
+    rows: TableRowNode[];
     colIds?: string[]; // Add column IDs to TableElement
 };
 // Define code elements
-export type CodeElement = {
+export type CodeNode = {
     type: 'code';
     content: string;
     inline: boolean;
 };
 // Define blockquotes
-export type BlockquoteElement = {
+export type BlockquoteNode = {
     type: 'blockquote';
     content: SemanticMarkdownAST[];
 };
+export type CustomNode = {
+    type: 'custom';
+    content: any;
+};
 // Define semantic HTML elements (like header, footer)
-export type SemanticHtmlElement = {
+export type SemanticHtmlNode = {
     type: 'semanticHtml';
     htmlType: 'article' | 'aside' | 'details' | 'figcaption' | 'figure' | 'footer' | 'header' | 'main' | 'mark' | 'nav' | 'section' | 'summary' | 'time';
     content: SemanticMarkdownAST[];
 };
-export type VideoElement = {
+export type VideoNode = {
     type: 'video';
     src: string;
     poster?: string;
     controls?: boolean;
 };
-export type TextElement = {
+export type TextNode = {
     type: 'text';
     content: string;
 };
 export type SemanticMarkdownAST =
-    TextElement
-    | BoldElement
-    | ItalicElement
-    | StrikethroughElement
-    | HeadingElement
-    | LinkElement
-    | ImageElement
-    | VideoElement
-    | ListElement
-    | TableElement
-    | CodeElement
-    | BlockquoteElement
-    | SemanticHtmlElement;
+    TextNode
+    | BoldNode
+    | ItalicNode
+    | StrikethroughNode
+    | HeadingNode
+    | LinkNode
+    | ImageNode
+    | VideoNode
+    | ListNode
+    | TableNode
+    | CodeNode
+    | BlockquoteNode
+    | SemanticHtmlNode
+    | CustomNode;
 
 export interface ConversionOptions {
     websiteDomain?: string;
@@ -102,4 +107,8 @@ export interface ConversionOptions {
     debug?: boolean;
     overrideDOMParser?: DOMParser;
     enableTableColumnTracking?: boolean;
+    overrideElementProcessing?: (element: Element, options: ConversionOptions, indentLevel: number) => SemanticMarkdownAST[] | undefined;
+    processUnhandledElement?: (element: Element, options: ConversionOptions, indentLevel: number) => SemanticMarkdownAST[] | undefined;
+    overrideNodeRenderer?: (node: SemanticMarkdownAST, options: ConversionOptions, indentLevel: number) => string | undefined;
+    renderCustomNode?: (node: CustomNode, options: ConversionOptions, indentLevel: number) => string | undefined;
 }

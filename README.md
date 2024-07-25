@@ -61,6 +61,40 @@ Example output with column tracking enabled:
 
 This feature is particularly useful for complex tables or when precise column identification is crucial for downstream LLM tasks.
 
+### Custom Element Processing and Rendering
+
+DOM to Semantic Markdown now offers advanced customization options for handling and rendering elements:
+
+1. **overrideElementProcessing**: Allows custom processing of HTML elements before conversion to AST.
+2. **processUnhandledElement**: Provides a way to handle unknown or custom HTML elements.
+3. **overrideNodeRenderer**: Enables custom rendering of AST nodes to Markdown.
+4. **renderCustomNode**: Allows rendering of custom AST nodes.
+
+These options provide flexibility for handling complex or custom HTML structures and controlling the output Markdown.
+
+Example usage:
+
+```javascript
+import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
+
+const html = '<custom-element>Custom content</custom-element>';
+const options = {
+   overrideElementProcessing: (element, options, indentLevel) => {
+      if (element.tagName.toLowerCase() === 'custom-element') {
+         return [{ type: 'custom', content: element.textContent }];
+      }
+   },
+   renderCustomNode: (node, options, indentLevel) => {
+      if (node.type === 'custom') {
+         return `**Custom:** ${node.content}`;
+      }
+   }
+};
+
+const markdown = convertHtmlToMarkdown(html, options);
+console.log(markdown); // Output: **Custom:** Custom content
+```
+
 ## Semantic Format
 
 DOM to Semantic Markdown's format captures rich web content structure:
@@ -276,6 +310,10 @@ Converts an HTML Element to Semantic Markdown.
 - `debug?: boolean`: Enable debug logging.
 - `overrideDOMParser?: DOMParser`: Custom DOMParser for Node.js environments.
 - `enableTableColumnTracking?: boolean`: Adds unique identifiers to table columns, enhancing LLM's ability to correlate data across rows.
+- `overrideElementProcessing?: (element: Element, options: ConversionOptions, indentLevel: number) => SemanticMarkdownAST[] | undefined`: Custom processing for HTML elements.
+- `processUnhandledElement?: (element: Element, options: ConversionOptions, indentLevel: number) => SemanticMarkdownAST[] | undefined`: Handler for unknown HTML elements.
+- `overrideNodeRenderer?: (node: SemanticMarkdownAST, options: ConversionOptions, indentLevel: number) => string | undefined`: Custom renderer for AST nodes.
+- `renderCustomNode?: (node: CustomNode, options: ConversionOptions, indentLevel: number) => string | undefined`: Renderer for custom AST nodes.
 
 ## Example
 

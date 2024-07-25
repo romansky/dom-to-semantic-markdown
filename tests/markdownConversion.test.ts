@@ -1,5 +1,9 @@
 import {JSDOM} from 'jsdom';
-import {convertHtmlToMarkdown, convertElementToMarkdown, ConversionOptions} from '../src';
+import {
+    convertHtmlToMarkdown,
+    convertElementToMarkdown,
+    ConversionOptions
+} from '../src';
 
 describe('HTML to Markdown conversion', () => {
     let dom: JSDOM;
@@ -114,8 +118,9 @@ describe('HTML to Markdown conversion', () => {
             '| Row 1, Cell 1 <!-- col-0 --> | Row 1, Cell 2 <!-- col-1 --> |\n' +
             '| Row 2, Cell 1 <!-- col-0 --> | Row 2, Cell 2 <!-- col-1 --> |';
         expect(convertHtmlToMarkdown(html, {
-            enableTableColumnTracking: true,
-            overrideDOMParser: new dom.window.DOMParser()}
+                enableTableColumnTracking: true,
+                overrideDOMParser: new dom.window.DOMParser()
+            }
         ).trim()).toBe(expected);
     });
 
@@ -164,4 +169,83 @@ describe('HTML to Markdown conversion', () => {
     });
 
     // Add more tests as needed for edge cases and specific features
+});
+
+describe('Custom Element Processing and Rendering', () => {
+
+    let dom: JSDOM;
+
+    beforeEach(() => {
+        dom = new JSDOM('<!doctype html><html><body></body></html>');
+        global.document = dom.window.document;
+    });
+
+    test('overrideElementProcessing', () => {
+        const html = '<custom-element>Custom content</custom-element>';
+        const options: ConversionOptions = {
+            overrideElementProcessing: (element) => {
+                if (element.tagName.toLowerCase() === 'custom-element') {
+                    return [{ type: 'custom', content: element.textContent }];
+                }
+            },
+            renderCustomNode: (node) => {
+                if (node.type === 'custom') {
+                    return `**Custom:** ${node.content}`;
+                }
+            },
+            overrideDOMParser: new dom.window.DOMParser()
+        };
+        const expected = '**Custom:** Custom content';
+        expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
+    });
+
+    test('processUnhandledElement', () => {
+        const html = '<unknown-element>Unknown content</unknown-element>';
+        const options: ConversionOptions = {
+            processUnhandledElement: (element) => {
+                return [{ type: 'text', content: `[Unknown: ${element.tagName}] ${element.textContent}` }];
+            },
+            overrideDOMParser: new dom.window.DOMParser()
+        };
+        const expected = '[Unknown: UNKNOWN-ELEMENT] Unknown content';
+        expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
+    });
+
+    test('overrideNodeRenderer', () => {
+        const html = '<h1>Title</h1>';
+        const options: ConversionOptions = {
+            overrideNodeRenderer: (node) => {
+                if (node.type === 'heading' && node.level === 1) {
+                    return `==== ${node.content} ====\n`;
+                }
+            },
+            overrideDOMParser: new dom.window.DOMParser()
+        };
+        const expected = '==== Title ====';
+        expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
+    });
+
+    test('combination of custom processing and rendering', () => {
+        const html = '<custom-element>Custom content</custom-element><h1>Title</h1>';
+        const options: ConversionOptions = {
+            overrideElementProcessing: (element) => {
+                if (element.tagName.toLowerCase() === 'custom-element') {
+                    return [{ type: 'custom', content: element.textContent }];
+                }
+            },
+            renderCustomNode: (node) => {
+                if (node.type === 'custom') {
+                    return `**Custom:** ${node.content}\n`;
+                }
+            },
+            overrideNodeRenderer: (node) => {
+                if (node.type === 'heading' && node.level === 1) {
+                    return `==== ${node.content} ====\n`;
+                }
+            },
+            overrideDOMParser: new dom.window.DOMParser()
+        };
+        const expected = '**Custom:** Custom content\n==== Title ====';
+        expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
+    });
 });

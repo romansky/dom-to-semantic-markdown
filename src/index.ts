@@ -45,7 +45,7 @@ export function convertElementToMarkdown(element: Element, options?: ConversionO
     if (options?.refifyUrls) {
         options.urlMap = refifyUrls(ast);
     }
-    return markdownASTToString(ast);
+    return markdownASTToString(ast, options);
 }
 
 /**

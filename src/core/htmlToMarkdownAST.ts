@@ -11,16 +11,20 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
         }
     };
 
-    element.childNodes.forEach((node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-            const textContent = escapeMarkdownCharacters(node.textContent?.trim() ?? '');
-            if (textContent && !!node.textContent) {
+    element.childNodes.forEach((childElement) => {
+        const overriddenElementProcessing = options?.overrideElementProcessing?.(childElement as Element, options, indentLevel);
+        if (overriddenElementProcessing) {
+            debugLog(`Element Processing Overridden: '${childElement.nodeType}'`);
+            result.push(...overriddenElementProcessing);
+        } else if (childElement.nodeType === Node.TEXT_NODE) {
+            const textContent = escapeMarkdownCharacters(childElement.textContent?.trim() ?? '');
+            if (textContent && !!childElement.textContent) {
                 debugLog(`Text Node: '${textContent}'`);
-                // preserve whitespaces when text node is not empty
-                result.push({type: 'text', content: node.textContent?.trim()});
+                // preserve whitespaces when text childElement is not empty
+                result.push({type: 'text', content: childElement.textContent?.trim()});
             }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-            const elem = node as Element;
+        } else if (childElement.nodeType === Node.ELEMENT_NODE) {
+            const elem = childElement as Element;
             if (/^h[1-6]$/i.test(elem.tagName)) {
                 const level = parseInt(elem.tagName.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6;
                 const content = escapeMarkdownCharacters(elem.textContent || '').trim();
@@ -211,8 +215,14 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                         });
                         break;
                     default:
-                        debugLog(`Generic HTMLElement: '${elem.tagName}'`);
-                        result.push(...htmlToMarkdownAST(elem, options));
+                        const unhandledElementProcessing = options?.processUnhandledElement?.(elem, options, indentLevel);
+                        if (unhandledElementProcessing) {
+                            debugLog(`Processing Unhandled Element: '${elem.tagName}'`);
+                            result.push(...unhandledElementProcessing);
+                        } else {
+                            debugLog(`Generic HTMLElement: '${elem.tagName}'`);
+                            result.push(...htmlToMarkdownAST(elem, options, indentLevel + 1));
+                        }
                         break;
                 }
             }
