@@ -180,9 +180,12 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                             // Handling inline code differently
                             const isCodeBlock = elem.parentNode && elem.parentNode.nodeName.toLowerCase() === 'pre';
                             debugLog(`${isCodeBlock ? 'Code Block' : 'Inline Code'}: '${content}'`);
+                            const languageClass = elem.className.split(" ").find(cls => cls.startsWith("language-"));
+                            const language = languageClass ? languageClass.replace("language-", "") : "";
                             result.push({
                                 type: 'code',
-                                content: elem.innerHTML?.trim() ?? '',
+                                content: elem.textContent?.trim() ?? '',
+                                language,
                                 inline: !isCodeBlock
                             });
                         }

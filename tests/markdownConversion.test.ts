@@ -74,11 +74,24 @@ describe('HTML to Markdown conversion', () => {
         expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim()).toBe(expected);
     });
 
+    test('converts code blocks with language', () => {
+        const html = `<pre><code class="language-javascript">function example() {\n  return true;\n}</code></pre>`;
+        const expected = '```javascript\nfunction example() {\n  return true;\n}\n```';
+        expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim()).toBe(expected);
+    });
+
     test('converts inline code', () => {
         const html = '<p>Use the <code>example()</code> function.</p>';
         const expected = 'Use the `example()` function.';
         expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim()).toBe(expected);
     });
+
+    test('converts code block with html inside', () => {
+        const html = '<p>Use the <code><span>example()</span></code> function.</p>';
+        const expected = 'Use the `example()` function.';
+        expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim()).toBe(expected);
+    });
+
 
     test('converts tables', () => {
         const html = `

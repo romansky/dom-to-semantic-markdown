@@ -55,6 +55,7 @@ export type TableNode = {
 // Define code elements
 export type CodeNode = {
     type: 'code';
+    language?: string;
     content: string;
     inline: boolean;
 };

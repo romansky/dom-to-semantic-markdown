@@ -107,7 +107,7 @@ export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: Conv
 
                     } else {
                         // For code blocks, we do not escape characters and preserve formatting
-                        markdownString += '\n```\n';
+                        markdownString += '\n```' + (node.language ?? '') + '\n';
                         markdownString += `${node.content}\n`;
                         markdownString += '```\n\n';
                     }
