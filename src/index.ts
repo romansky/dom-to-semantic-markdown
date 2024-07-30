@@ -54,7 +54,7 @@ export function convertElementToMarkdown(element: Element, options?: ConversionO
  * @param predicate A function that returns true for the desired node.
  * @returns The first matching node, or undefined if not found.
  */
-export function findInMarkdownAST(ast: SemanticMarkdownAST, predicate: (node: SemanticMarkdownAST) => boolean): SemanticMarkdownAST | undefined {
+export function findInMarkdownAST(ast: SemanticMarkdownAST | SemanticMarkdownAST[], predicate: (node: SemanticMarkdownAST) => boolean): SemanticMarkdownAST | undefined {
     return findInAST(ast, predicate);
 }
 
@@ -64,7 +64,7 @@ export function findInMarkdownAST(ast: SemanticMarkdownAST, predicate: (node: Se
  * @param predicate A function that returns true for the desired nodes.
  * @returns An array of all matching nodes.
  */
-export function findAllInMarkdownAST(ast: SemanticMarkdownAST, predicate: (node: SemanticMarkdownAST) => boolean): SemanticMarkdownAST[] {
+export function findAllInMarkdownAST(ast: SemanticMarkdownAST | SemanticMarkdownAST[], predicate: (node: SemanticMarkdownAST) => boolean): SemanticMarkdownAST[] {
     return findAllInAST(ast, predicate);
 }
 

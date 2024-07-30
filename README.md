@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img width="100" height="100" src="d2m_color.svg" alt=""><br>
+    <img width="100" height="100" src="d2m_color.svg" alt="DOM to Semantic Markdown Logo"><br>
     DOM to Semantic Markdown
 </h1>
 
@@ -44,7 +44,7 @@ DOM to Semantic Markdown addresses several key challenges in extracting web cont
 - Metadata capture for images, tables, and other rich media elements
 - URL refification for token optimization
 - Customizable conversion options
-- Browser and Node.js support
+- Browser, CLI and Node.js support
 - Table column tracking for enhanced LLM processing capabilities
 
 ## Advanced Features
