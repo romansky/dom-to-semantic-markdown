@@ -5,6 +5,13 @@ import {
     ConversionOptions
 } from '../src';
 
+// Helper function to create a DOM element
+function createElement(html: string): Element {
+    const div = document.createElement('div');
+    div.innerHTML = html;
+    return div.firstElementChild as Element;
+}
+
 describe('HTML to Markdown conversion', () => {
     let dom: JSDOM;
 
@@ -13,12 +20,6 @@ describe('HTML to Markdown conversion', () => {
         global.document = dom.window.document;
     });
 
-    // Helper function to create a DOM element
-    function createElement(html: string): Element {
-        const div = document.createElement('div');
-        div.innerHTML = html;
-        return div.firstElementChild as Element;
-    }
 
     test('converts simple paragraph', () => {
         const html = '<p>This is a simple paragraph.</p>';
@@ -198,7 +199,7 @@ describe('Custom Element Processing and Rendering', () => {
         const options: ConversionOptions = {
             overrideElementProcessing: (element) => {
                 if (element.tagName.toLowerCase() === 'custom-element') {
-                    return [{ type: 'custom', content: element.textContent }];
+                    return [{type: 'custom', content: element.textContent}];
                 }
             },
             renderCustomNode: (node) => {
@@ -216,7 +217,7 @@ describe('Custom Element Processing and Rendering', () => {
         const html = '<unknown-element>Unknown content</unknown-element>';
         const options: ConversionOptions = {
             processUnhandledElement: (element) => {
-                return [{ type: 'text', content: `[Unknown: ${element.tagName}] ${element.textContent}` }];
+                return [{type: 'text', content: `[Unknown: ${element.tagName}] ${element.textContent}`}];
             },
             overrideDOMParser: new dom.window.DOMParser()
         };
@@ -243,7 +244,7 @@ describe('Custom Element Processing and Rendering', () => {
         const options: ConversionOptions = {
             overrideElementProcessing: (element) => {
                 if (element.tagName.toLowerCase() === 'custom-element') {
-                    return [{ type: 'custom', content: element.textContent }];
+                    return [{type: 'custom', content: element.textContent}];
                 }
             },
             renderCustomNode: (node) => {
@@ -260,5 +261,155 @@ describe('Custom Element Processing and Rendering', () => {
         };
         const expected = '**Custom:** Custom content\n==== Title ====';
         expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
+    });
+});
+
+describe('Meta Data Extraction', () => {
+    let dom: JSDOM;
+
+    beforeEach(() => {
+        dom = new JSDOM();
+        global.document = dom.window.document;
+    });
+
+    test('extracts basic meta tags', () => {
+        const html = `
+      <html>
+      <head>
+        <title>Test Page Title</title>
+        <meta name="description" content="This is a test page description.">
+        <meta name="keywords" content="test, page, keywords">
+      </head>
+      <body>
+        <h1>Test Page</h1>
+      </body>
+      </html>
+    `;
+
+        const expectedBasic = `---
+title: "Test Page Title"
+description: "This is a test page description."
+keywords: "test, page, keywords"
+---
+
+
+# Test Page`;
+
+        expect(convertHtmlToMarkdown(html, {
+            includeMetaData: 'basic',
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expectedBasic);
+    });
+
+    test('extracts extended meta tags', () => {
+        const html = `
+      <html>
+      <head>
+        <title>Test Page Title</title>
+        <meta name="description" content="This is a test page description.">
+        <meta property="og:title" content="Open Graph Title">
+        <meta property="og:description" content="Open Graph Description">
+        <meta property="og:image" content="https://example.com/image.jpg">
+        <meta name="twitter:title" content="Twitter Card Title">
+        <meta name="twitter:description" content="Twitter Card Description">
+        <meta name="twitter:image" content="https://example.com/twitter-image.jpg">
+        <script type="application/ld+json">
+          {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "JSON-LD Title",
+            "description": "JSON-LD Description"
+          }
+        </script>
+      </head>
+      <body>
+        <h1>Test Page</h1>
+      </body>
+      </html>
+    `;
+
+        const expectedExtended = `---
+title: "Test Page Title"
+description: "This is a test page description."
+openGraph:
+  title: "Open Graph Title"
+  description: "Open Graph Description"
+  image: "https://example.com/image.jpg"
+twitter:
+  title: "Twitter Card Title"
+  description: "Twitter Card Description"
+  image: "https://example.com/twitter-image.jpg"
+schema:
+  WebPage:
+    name: "JSON-LD Title"
+    description: "JSON-LD Description"
+---
+
+
+# Test Page`;
+
+        expect(convertHtmlToMarkdown(html, {
+            includeMetaData: 'extended',
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expectedExtended);
+    });
+
+    test('handles missing meta data gracefully', () => {
+        const html = `
+      <html>
+      <head>
+        <title>Test Page Title</title>
+      </head>
+      <body>
+        <h1>Test Page</h1>
+      </body>
+      </html>
+    `;
+
+        const expectedBasic = `---
+title: "Test Page Title"
+---
+
+
+# Test Page`;
+
+        const expectedExtended = `---
+title: "Test Page Title"
+---
+
+
+# Test Page`;
+
+        expect(convertHtmlToMarkdown(html, {
+            includeMetaData: 'basic',
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expectedBasic);
+        expect(convertHtmlToMarkdown(html, {
+            includeMetaData: 'extended',
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expectedExtended);
+    });
+
+    test('does not include meta data when disabled', () => {
+        const html = `
+      <html>
+      <head>
+        <title>Test Page Title</title>
+        <meta name="description" content="This is a test page description.">
+      </head>
+      <body>
+        <h1>Test Page</h1>
+      </body>
+      </html>
+    `;
+
+        const expected = `# Test Page`;
+
+        expect(convertHtmlToMarkdown(html, {
+            includeMetaData: false,
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expected);
+        expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim())
+            .toBe(expected); // Default should be to not include meta data
     });
 });

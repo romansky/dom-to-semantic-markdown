@@ -20,14 +20,25 @@ export function convertHtmlToMarkdown(html: string, options?: ConversionOptions)
     }
 
     const doc = parser.parseFromString(html, 'text/html');
-
     let element: Element;
 
     if (options?.extractMainContent) {
         element = findMainContent(doc);
+        if (options.includeMetaData && !!doc.querySelector('head')?.innerHTML && !element.querySelector('head')) {
+            // content container was found and extracted, re-attaching the head for meta-data extraction
+            element = parser.parseFromString(
+                `<html>${doc.head.outerHTML}${element.outerHTML}`,
+                'text/html'
+            ).documentElement;
+        }
     } else {
         // If there's a body, use it; otherwise, use the document element
-        element = doc.body || doc.documentElement;
+        if (options?.includeMetaData && !!doc.querySelector('head')?.innerHTML) {
+            element = doc.documentElement;
+        } else {
+            element = doc.body || doc.documentElement;
+        }
+
     }
 
     return convertElementToMarkdown(element, options);

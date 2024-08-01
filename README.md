@@ -190,6 +190,8 @@ Options:
   -o, --output <file>  Output Markdown file
   -e, --extract-main   Extract main content
   -u, --url <url>      URL to fetch HTML content from
+  -t, --track-table-columns                          Enable table column tracking for improved LLM data correlation
+  -meta, --include-meta-data <"basic" | "extended">  Include metadata extracted from the HTML head
   -h, --help           display help for command
 
 > npx d2m@latest -i tryme.html -o output.md
@@ -314,6 +316,10 @@ Converts an HTML Element to Semantic Markdown.
 - `processUnhandledElement?: (element: Element, options: ConversionOptions, indentLevel: number) => SemanticMarkdownAST[] | undefined`: Handler for unknown HTML elements.
 - `overrideNodeRenderer?: (node: SemanticMarkdownAST, options: ConversionOptions, indentLevel: number) => string | undefined`: Custom renderer for AST nodes.
 - `renderCustomNode?: (node: CustomNode, options: ConversionOptions, indentLevel: number) => string | undefined`: Renderer for custom AST nodes.
+- `includeMetaData?: 'basic' | 'extended' | false`: Controls whether to include metadata extracted from the HTML head.
+  - `'basic'`: Includes standard meta tags like title, description, and keywords.
+  - `'extended'`: Includes basic meta tags, Open Graph tags, Twitter Card tags, and JSON-LD data.
+  - `false`: Disables metadata extraction.
 
 ## Example
 

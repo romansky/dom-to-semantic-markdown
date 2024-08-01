@@ -28,6 +28,7 @@ program
     .option('-e, --extract-main', 'Extract main content')
     .option('-u, --url <url>', 'URL to fetch HTML content from')
     .option('-t, --track-table-columns', 'Enable table column tracking for improved LLM data correlation')
+    .option(`-meta, --include-meta-data <"basic" | "extended">`, 'Include metadata extracted from the HTML head')
     .parse(process.argv);
 
 const options = program.opts();
@@ -48,6 +49,7 @@ async function main() {
         extractMainContent: options.extractMain,
         overrideDOMParser: new (new JSDOM()).window.DOMParser(),
         enableTableColumnTracking: options.trackTableColumns,
+        includeMetaData: options.includeMetaData,
     });
 
     if (options.output) {

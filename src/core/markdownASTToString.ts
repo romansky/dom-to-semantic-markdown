@@ -1,6 +1,71 @@
 import {ConversionOptions, SemanticMarkdownAST} from "../types/markdownTypes";
+import {findInMarkdownAST} from "../index";
 
 export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: ConversionOptions, indentLevel: number = 0): string {
+    let markdownString = '';
+    markdownString += markdownMetaASTToString(nodes, options, indentLevel);
+    markdownString += markdownContentASTToString(nodes, options, indentLevel);
+    return markdownString;
+}
+
+function markdownMetaASTToString(nodes: SemanticMarkdownAST[], options?: ConversionOptions, indentLevel: number = 0): string {
+    let markdownString = '';
+
+    if (options?.includeMetaData) {
+        // include meta-data
+        markdownString += '---\n';
+        const node = findInMarkdownAST(nodes, _ => _.type === 'meta');
+        if (node?.type === 'meta') {
+            if (node.content.standard) {
+                Object.keys(node.content.standard).forEach(key => {
+                    markdownString += `${key}: "${node.content.standard![key]}"\n`;
+                })
+            }
+
+            if (options.includeMetaData === 'extended') {
+                if (node.content.openGraph) {
+                    if (Object.keys(node.content.openGraph).length > 0) {
+                        markdownString += 'openGraph:\n';
+                        for (const [key, value] of Object.entries(node.content.openGraph)) {
+                            markdownString += `  ${key}: "${value}"\n`;
+                        }
+                    }
+                }
+
+                if (node.content.twitter) {
+                    if (Object.keys(node.content.twitter).length > 0) {
+                        markdownString += 'twitter:\n';
+                        for (const [key, value] of Object.entries(node.content.twitter)) {
+                            markdownString += `  ${key}: "${value}"\n`;
+                        }
+                    }
+                }
+
+                if (node.content.jsonLd && node.content.jsonLd.length > 0) {
+                    markdownString += 'schema:\n';
+                    node.content.jsonLd.forEach(item => {
+
+                        const {
+                            '@context': jldContext, '@type': jldType,
+                            ...semanticData
+                        } = item;
+                        markdownString += `  ${jldType ?? '(unknown type)'}:\n`;
+                        Object.keys(semanticData).forEach(key => {
+                            markdownString += `    ${key}: ${JSON.stringify(semanticData[key])}\n`;
+                        })
+                    })
+
+                }
+            }
+        }
+        markdownString += '---\n\n';
+
+
+    }
+
+    return markdownString;
+}
+function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: ConversionOptions, indentLevel: number = 0): string {
     let markdownString = '';
 
     nodes.forEach((node) => {
@@ -41,7 +106,7 @@ export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                             markdownString += ` [${node.content[0].content}](${node.href})`;
                         } else {
                             // Use HTML <a> tag for links with rich content
-                            const linkContent = markdownASTToString(node.content, options);
+                            const linkContent = markdownContentASTToString(node.content, options, indentLevel + 1);
                             markdownString += ` <a href="${node.href}">${linkContent}</a>`;
                         }
                     }
@@ -62,7 +127,7 @@ export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                 case 'list':
                     node.items.forEach((item, i) => {
                         const listItemPrefix = node.ordered ? `${i + 1}.` : '-';
-                        const contents = markdownASTToString(item.content, options, indentLevel + 1).trim();
+                        const contents = markdownContentASTToString(item.content, options, indentLevel + 1).trim();
                         if (markdownString.slice(-1) !== '\n') {
                             markdownString += '\n';
                         }
@@ -87,7 +152,7 @@ export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                         row.cells.forEach((cell) => {
                             let cellContent = typeof cell.content === 'string'
                                 ? cell.content
-                                : markdownASTToString(cell.content, options, indentLevel + 1).trim();
+                                : markdownContentASTToString(cell.content, options, indentLevel + 1).trim();
                             if (cell.colId) {
                                 cellContent += ' ' + `<!-- ${cell.colId} -->`
                             }
@@ -113,12 +178,15 @@ export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                     }
                     break;
                 case 'blockquote':
-                    markdownString += `> ${markdownASTToString(node.content, options).trim()}\n\n`;
+                    markdownString += `> ${markdownContentASTToString(node.content, options).trim()}\n\n`;
+                    break;
+                case "meta":
+                    // already handled
                     break;
                 case 'semanticHtml':
                     switch (node.htmlType) {
                         case "article":
-                            markdownString += '\n\n' + markdownASTToString(node.content, options);
+                            markdownString += '\n\n' + markdownContentASTToString(node.content, options);
                             break;
                         case "summary":
                         case "time":
@@ -131,11 +199,11 @@ export function markdownASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                         case "footer":
                         case "details":
                         case "figure":
-                            markdownString += `\n\n<-${node.htmlType}->\n` + markdownASTToString(node.content, options) + `\n\n</-${node.htmlType}->\n`;
+                            markdownString += `\n\n<-${node.htmlType}->\n` + markdownContentASTToString(node.content, options) + `\n\n</-${node.htmlType}->\n`;
                             break;
                         case "section":
                             markdownString += '---\n\n';
-                            markdownString += markdownASTToString(node.content, options);
+                            markdownString += markdownContentASTToString(node.content, options);
                             markdownString += '\n\n';
                             markdownString += '---\n\n';
                             break;

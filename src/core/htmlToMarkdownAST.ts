@@ -1,4 +1,4 @@
-import {ConversionOptions, SemanticMarkdownAST} from "../types/markdownTypes";
+import {ConversionOptions, MetaDataNode, SemanticMarkdownAST} from "../types/markdownTypes";
 
 // src/core/htmlToMarkdownAST.ts
 
@@ -144,6 +144,68 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
 
 
                 result.push({type: 'table', rows: markdownTableRows, colIds});
+            } else if (elem.tagName.toLowerCase() === 'head' && !!options?.includeMetaData) {
+                const node = {
+                    type: 'meta',
+                    content: {
+                        standard: {},
+                        openGraph: {},
+                        twitter: {},
+                    }
+                } as MetaDataNode;
+
+                elem.querySelectorAll('title')
+                    .forEach(titleElem => {
+                        node.content.standard!['title'] = escapeMarkdownCharacters(titleElem.text);
+                    });
+
+                // Extract meta tags
+                const metaTags = elem.querySelectorAll('meta');
+                const nonSemanticTagNames = [
+                    "viewport",
+                    "referrer",
+                    "Content-Security-Policy"
+                ];
+                metaTags.forEach(metaTag => {
+                    const name = metaTag.getAttribute('name');
+                    const property = metaTag.getAttribute('property');
+                    const content = metaTag.getAttribute('content');
+
+                    if (property && property.startsWith('og:') && content && options.includeMetaData === 'extended') {
+                        node.content.openGraph![property.substring(3)] = content;
+                    } else if (name && name.startsWith('twitter:') && content && options.includeMetaData === 'extended') {
+                        node.content.twitter![name.substring(8)] = content;
+                    } else if (name && !nonSemanticTagNames.includes(name) && content) {
+                        node.content.standard![name] = content;
+                    }
+                });
+
+                // Extract JSON-LD data
+                if (options.includeMetaData === 'extended') {
+
+                    type JsonLdData = {
+                        [key: string]: any;
+                    };
+
+                    const jsonLdData: JsonLdData[] = [];
+
+                    const jsonLDScripts = elem.querySelectorAll('script[type="application/ld+json"]');
+
+                    jsonLDScripts.forEach(script => {
+                        try {
+                            const jsonContent = script.textContent;
+                            if (jsonContent) {
+                                const parsedData = JSON.parse(jsonContent);
+                                jsonLdData.push(parsedData);
+                            }
+                        } catch (error) {
+                            console.error('Failed to parse JSON-LD', error);
+                        }
+                    });
+
+                    node.content.jsonLd = jsonLdData;
+                }
+                result.push(node);
             } else {
                 const content = escapeMarkdownCharacters(elem.textContent || '');
                 switch (elem.tagName.toLowerCase()) {
@@ -151,7 +213,6 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     case 'script':
                     case 'style':
                     case 'html':
-                    case 'head':
                         // blackhole..
                         break;
                     case 'strong':

@@ -54,6 +54,7 @@ The `d2m` command converts HTML files or URL content to Markdown. Here are the a
 - `-e, --extract-main`: Extract main content (optional)
 - `-u, --url <url>`: URL to fetch HTML content from
 - `-t, --track-table-columns`: Enable table column tracking for improved LLM data correlation
+- `-meta, --include-meta-data <"basic" | "extended">`: Include metadata extracted from the HTML head
 
 ### Examples
 
@@ -125,6 +126,12 @@ d2m -u https://example.com
 
 ```sh
 d2m -u https://example.com -o output.md
+```
+
+6. Convert HTML content from a URL, extract metadata and print the result to the console:
+
+```sh
+d2m -u https://example.com -meta basic
 ```
 
 ## License
