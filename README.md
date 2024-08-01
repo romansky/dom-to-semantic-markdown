@@ -46,6 +46,7 @@ DOM to Semantic Markdown addresses several key challenges in extracting web cont
 - Customizable conversion options
 - Browser, CLI and Node.js support
 - Table column tracking for enhanced LLM processing capabilities
+- Extract page metadata (e.g., title, description, keywords, jsonld etc)
 
 ## Advanced Features
 
