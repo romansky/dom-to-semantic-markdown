@@ -182,7 +182,6 @@ describe('HTML to Markdown conversion', () => {
         expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
     });
 
-    // Add more tests as needed for edge cases and specific features
 });
 
 describe('Custom Element Processing and Rendering', () => {

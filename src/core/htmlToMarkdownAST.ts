@@ -1,7 +1,5 @@
 import {ConversionOptions, MetaDataNode, SemanticMarkdownAST} from "../types/markdownTypes";
 
-// src/core/htmlToMarkdownAST.ts
-
 export function htmlToMarkdownAST(element: Element, options?: ConversionOptions, indentLevel: number = 0): SemanticMarkdownAST[] {
     let result: SemanticMarkdownAST[] = [];
 
@@ -308,7 +306,6 @@ function escapeMarkdownCharacters(text: string, isInlineCode = false) {
         .replace(/>/g, '&gt;');
 
     // Then escape characters that have special meaning in Markdown
-    // The list of characters to escape can be adjusted as needed
     escapedText = escapedText.replace(/([\\`*_{}[\]#+!|])/g, '\\$1');
     return escapedText;
 }
