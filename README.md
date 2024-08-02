@@ -1,4 +1,11 @@
-# DOM to Semantic Markdown
+<h1 align="center">
+    <img width="100" height="100" src="d2m_color.svg" alt="DOM to Semantic Markdown Logo"><br>
+    DOM to Semantic Markdown
+</h1>
+
+[![CI](https://github.com/romansky/dom-to-semantic-markdown/actions/workflows/ci.yml/badge.svg)](https://github.com/romansku/dom-to-semantic-markdown/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/dom-to-semantic-markdown.svg)](https://badge.fury.io/js/dom-to-semantic-markdown)
+[![License: ISC](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 This library converts HTML DOM to a semantic Markdown format optimized for use with Large Language Models (LLMs). It
 preserves the semantic structure of web content, extracts essential metadata, and reduces token usage compared to raw
