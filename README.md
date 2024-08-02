@@ -21,8 +21,6 @@ HTML, making it easier for LLMs to understand and process information.
 * **Main Content Detection:** Automatically identifies and extracts the primary content section of a webpage.
 * **Table Column Tracking:** Adds unique identifiers to table columns, improving LLM's ability to correlate data across
   rows.
-* **Customizable Conversion:** Offers options to tailor the conversion process to specific needs.
-* **Multiple Environments:** Supports browser, Node.js, and command-line usage.
 
 ## Special Feature Examples
 
@@ -390,7 +388,9 @@ Converts an HTML Element to semantic Markdown.
   Custom renderer for AST nodes.
 * `renderCustomNode?: (node: CustomNode, options: ConversionOptions, indentLevel: number) => string | undefined`:
   Renderer for custom AST nodes.
-* `includeMetaData?: 'basic' | 'extended' | false`: Controls metadata extraction.
+* `includeMetaData?: 'basic' | 'extended'`: Controls whether to include metadata extracted from the HTML head.
+    - `'basic'`: Includes standard meta tags like title, description, and keywords.
+    - `'extended'`: Includes basic meta tags, Open Graph tags, Twitter Card tags, and JSON-LD data.
 
 ## Contributing
 
