@@ -169,10 +169,14 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     const property = metaTag.getAttribute('property');
                     const content = metaTag.getAttribute('content');
 
-                    if (property && property.startsWith('og:') && content && options.includeMetaData === 'extended') {
-                        node.content.openGraph![property.substring(3)] = content;
-                    } else if (name && name.startsWith('twitter:') && content && options.includeMetaData === 'extended') {
-                        node.content.twitter![name.substring(8)] = content;
+                    if (property && property.startsWith('og:') && content) {
+                        if (options.includeMetaData === 'extended') {
+                            node.content.openGraph![property.substring(3)] = content;
+                        }
+                    } else if (name && name.startsWith('twitter:') && content) {
+                        if (options.includeMetaData === 'extended') {
+                            node.content.twitter![name.substring(8)] = content;
+                        }
                     } else if (name && !nonSemanticTagNames.includes(name) && content) {
                         node.content.standard![name] = content;
                     }
