@@ -392,6 +392,29 @@ Converts an HTML Element to semantic Markdown.
     - `'basic'`: Includes standard meta tags like title, description, and keywords.
     - `'extended'`: Includes basic meta tags, Open Graph tags, Twitter Card tags, and JSON-LD data.
 
+## Using the Output with LLMs
+
+The semantic Markdown produced by this library is optimized for use with Large Language Models (LLMs). To use it effectively:
+
+1. Extract the Markdown content using the library.
+2. Start with a brief instruction or context for the LLM.
+3. Wrap the extracted Markdown in triple backticks (```).
+4. Follow the Markdown with your question or prompt.
+
+Example:
+
+````
+The following is a semantic Markdown representation of a webpage. Please analyze its content:
+
+```markdown
+{paste your extracted markdown here}
+```
+
+{your question, e.g., "What are the main points discussed in this article?"}
+````
+
+This format helps the LLM understand its task and the context of the content, enabling more accurate and relevant responses to your questions.
+
 ## Contributing
 
 Contributions are welcome! See the [CONTRIBUTING.md](CONTRIBUTING.md) file for details.
