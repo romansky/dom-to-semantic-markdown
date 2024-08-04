@@ -31,7 +31,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "useful": "^0.7.21"
+    "useful": "0.7.21"
   },
   "directories": {
     "example": "examples",
