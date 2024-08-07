@@ -30,9 +30,6 @@
     "tslib": "^2.6.3",
     "typescript": "^5.5.4"
   },
-  "dependencies": {
-    "useful": "0.8.4"
-  },
   "directories": {
     "example": "examples",
     "test": "tests"

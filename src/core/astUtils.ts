@@ -1,5 +1,4 @@
 import {SemanticMarkdownAST} from "../types/markdownTypes";
-import {isNot} from "useful";
 
 export const getMainContent = (markdownStr: string) => {
     if (markdownStr.includes('<-main->')) {
@@ -12,6 +11,10 @@ export const getMainContent = (markdownStr: string) => {
         return markdownStr.replace(removeSectionsRegex, '');
     }
 }
+
+export const isNot = <T, U>(tPred: (t: T | U) => t is T) =>
+    (t: T | U): t is Exclude<U, T> => !tPred(t);
+
 const isString = (x: any): x is string => typeof x === "string";
 
 export function findInAST(markdownElement: SemanticMarkdownAST | SemanticMarkdownAST[], checker: (markdownElement: SemanticMarkdownAST) => boolean): SemanticMarkdownAST | undefined {
