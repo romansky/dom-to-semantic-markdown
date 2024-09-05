@@ -177,9 +177,9 @@ export function getVisibleText(element: Element): string {
 
     let text = '';
     for (const child of Array.from(element.childNodes)) {
-      if (child.nodeType === element.TEXT_NODE) {
+        if (child.nodeType === 3) {
             text += child.textContent;
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
+        } else if (child.nodeType === 1) {
             text += getVisibleText(child as Element);
         }
     }

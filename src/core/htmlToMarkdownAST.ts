@@ -14,14 +14,14 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
         if (overriddenElementProcessing) {
             debugLog(`Element Processing Overridden: '${childElement.nodeType}'`);
             result.push(...overriddenElementProcessing);
-        } else if (childElement.nodeType === childElement.TEXT_NODE) {
+        } else if (childElement.nodeType === 3) {
             const textContent = escapeMarkdownCharacters(childElement.textContent?.trim() ?? '');
             if (textContent && !!childElement.textContent) {
                 debugLog(`Text Node: '${textContent}'`);
                 // preserve whitespaces when text childElement is not empty
                 result.push({type: 'text', content: childElement.textContent?.trim()});
             }
-        } else if (childElement.nodeType === childElement.ELEMENT_NODE) {
+        } else if (childElement.nodeType === 1) {
             const elem = childElement as Element;
             if (/^h[1-6]$/i.test(elem.tagName)) {
                 const level = parseInt(elem.tagName.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6;
@@ -51,7 +51,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                         (elem as HTMLAnchorElement).href.substring(options.websiteDomain.length) :
                         (elem as HTMLAnchorElement).href;
                     // if all children are text,
-                    if (Array.from(elem.childNodes).every(_ => _.nodeType === _.TEXT_NODE)) {
+                    if (Array.from(elem.childNodes).every(_ => _.nodeType === 3)) {
                         result.push({
                             type: 'link',
                             href: href,
@@ -117,7 +117,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     const cells = Array.from(row.querySelectorAll('th, td')).map((cell, columnIndex) => {
                         return {
                             type: 'tableCell' as const,
-                            content: cell.nodeType === cell.TEXT_NODE
+                            content: cell.nodeType === 3
                                 ? escapeMarkdownCharacters(cell.textContent?.trim() ?? '')
                                 : htmlToMarkdownAST(cell, options, indentLevel + 1),
                             colId: colIds[columnIndex] as string | undefined
