@@ -1,12 +1,12 @@
 {
-  "name": "dom-to-semantic-markdown",
-  "version": "1.2.4",
+  "name": "@yawnxyz/dom-to-semantic-markdown",
+  "version": "1.2.6",
   "description": "DOM to Semantic-Markdown for use in LLMs",
   "main": "./dist/node/index.js",
   "types": "./dist/node/index.d.ts",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "yarn clean && npm run build:browser && npm run build:node",
+    "build": "yarn clean && npm run build:node",
     "build:node": "tsc -p tsconfig.node.json",
     "build:browser": "rollup -c --bundleConfigAsCjs",
     "watch": "tsc -p tsconfig.json --watch",

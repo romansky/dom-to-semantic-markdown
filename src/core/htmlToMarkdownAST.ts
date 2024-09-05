@@ -1,4 +1,4 @@
-import { ConversionOptions, MetaDataNode, SemanticMarkdownAST } from "../types/markdownTypes.ts";
+import { ConversionOptions, MetaDataNode, SemanticMarkdownAST } from "../types/markdownTypes";
 
 export function htmlToMarkdownAST(element: Element, options?: ConversionOptions, indentLevel: number = 0): SemanticMarkdownAST[] {
   let result: SemanticMarkdownAST[] = [];

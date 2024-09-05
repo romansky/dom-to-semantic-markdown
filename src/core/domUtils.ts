@@ -1,5 +1,3 @@
-import { JSDOM } from "jsdom";
-
 const enableDebug = false;
 const debugMessage = (message: string) => {
   if (enableDebug) {
@@ -32,8 +30,8 @@ export function findMainContent(document: Document): Element {
 export function wrapMainContent(mainContentElement: Element, document: Document) {
   if (mainContentElement.tagName.toLowerCase() !== 'main') {
     debugMessage('Wrapping main content in <main> element');
-    const mainElement = document.createElement('main');
-    mainContentElement.parentNode?.insertBefore(mainElement, mainContentElement);
+    const mainElement: HTMLElement = document.createElement('main');
+    mainContentElement.before(mainElement);
     mainElement.appendChild(mainContentElement);
     mainElement.id = 'detected-main-content';
     debugMessage('Main content wrapped successfully');
@@ -162,10 +160,10 @@ function calculateLinkDensity(element: Element): number {
   return linkLength / textLength;
 }
 
+
 export function isElementVisible(element: Element): boolean {
-  const window = element.ownerDocument?.defaultView;
-  if (!window) {
-    return true; // If we can't get the window, assume it's visible
+  if (!(element instanceof HTMLElement)) {
+    return true; // Non-HTMLElements are considered visible
   }
 
   const style = window.getComputedStyle(element);
@@ -188,27 +186,3 @@ export function getVisibleText(element: Element): string {
 
   return text.trim();
 }
-
-// Example usage
-const html = `
-<!DOCTYPE html>
-<html>
-<body>
-    <header>Header content</header>
-    <main>
-        <h1>Main Content</h1>
-        <p>This is the main content of the page.</p>
-    </main>
-    <footer>Footer content</footer>
-</body>
-</html>
-`;
-
-const dom = new JSDOM(html);
-const document = dom.window.document;
-
-const mainContent = findMainContent(document);
-console.log("Main content found:", mainContent.outerHTML);
-
-wrapMainContent(mainContent, document);
-console.log("Document after wrapping:", document.body.innerHTML);
