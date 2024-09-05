@@ -3,7 +3,7 @@ import {markdownASTToString} from './core/markdownASTToString';
 import {findMainContent, wrapMainContent} from './core/domUtils';
 import {refifyUrls} from './core/urlUtils';
 import {findInAST, findAllInAST} from './core/astUtils';
-import {ConversionOptions, SemanticMarkdownAST} from './types/markdownTypes';
+import type {ConversionOptions, SemanticMarkdownAST} from './types/markdownTypes';
 
 export {ConversionOptions, SemanticMarkdownAST};
 
