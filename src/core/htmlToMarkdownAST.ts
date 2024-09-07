@@ -38,7 +38,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
             } else if (elem.tagName.toLowerCase() === 'a') {
                 debugLog(`Link: '${(elem as HTMLAnchorElement).href}' with text '${elem.textContent}'`);
                 // Check if the href is a data URL for an image
-                if ((elem as HTMLAnchorElement).href.startsWith("data:image")) {
+                if ((elem as HTMLAnchorElement).href?.startsWith("data:image")) {
                     // If it's a data URL for an image, skip this link
                     result.push({
                         type: 'link',
@@ -47,8 +47,8 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     });
                 } else {
                     // Process the link as usual
-                    const href = options?.websiteDomain && (elem as HTMLAnchorElement).href.startsWith(options.websiteDomain) ?
-                        (elem as HTMLAnchorElement).href.substring(options.websiteDomain.length) :
+                    const href = options?.websiteDomain && (elem as HTMLAnchorElement).href?.startsWith(options.websiteDomain) ?
+                        (elem as HTMLAnchorElement).href?.substring(options.websiteDomain.length) :
                         (elem as HTMLAnchorElement).href;
                     // if all children are text,
                     if (Array.from(elem.childNodes).every(_ => _.nodeType === Node.TEXT_NODE)) {
@@ -67,15 +67,15 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                 }
             } else if (elem.tagName.toLowerCase() === 'img') {
                 debugLog(`Image: src='${(elem as HTMLImageElement).src}', alt='${(elem as HTMLImageElement).alt}'`);
-                if ((elem as HTMLImageElement).src.startsWith("data:image")) {
+                if ((elem as HTMLImageElement).src?.startsWith("data:image")) {
                     result.push({
                         type: 'image',
                         src: '-',
                         alt: escapeMarkdownCharacters((elem as HTMLImageElement).alt)
                     });
                 } else {
-                    const src = options?.websiteDomain && (elem as HTMLImageElement).src.startsWith(options.websiteDomain) ?
-                        (elem as HTMLImageElement).src.substring(options.websiteDomain.length) :
+                    const src = options?.websiteDomain && (elem as HTMLImageElement).src?.startsWith(options.websiteDomain) ?
+                        (elem as HTMLImageElement).src?.substring(options.websiteDomain.length) :
                         (elem as HTMLImageElement).src;
                     result.push({type: 'image', src, alt: escapeMarkdownCharacters((elem as HTMLImageElement).alt)});
                 }
@@ -243,7 +243,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                             // Handling inline code differently
                             const isCodeBlock = elem.parentNode && elem.parentNode.nodeName.toLowerCase() === 'pre';
                             debugLog(`${isCodeBlock ? 'Code Block' : 'Inline Code'}: '${content}'`);
-                            const languageClass = elem.className.split(" ").find(cls => cls.startsWith("language-"));
+                            const languageClass = elem.className?.split(" ").find(cls => cls.startsWith("language-"));
                             const language = languageClass ? languageClass.replace("language-", "") : "";
                             result.push({
                                 type: 'code',
