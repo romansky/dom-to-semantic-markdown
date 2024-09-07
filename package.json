@@ -2,6 +2,10 @@
   "name": "dom-to-semantic-markdown",
   "version": "1.2.5",
   "description": "DOM to Semantic-Markdown for use in LLMs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/romansky/dom-to-semantic-markdown.git"
+  },
   "main": "./dist/node/index.js",
   "types": "./dist/node/index.d.ts",
   "scripts": {
