@@ -43,15 +43,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Check if the published package is available on NPM
-      - name: Wait for NPM package availability
+
+      # Wait for the specific version of the NPM package to become available
+      - name: Wait for NPM package version availability
         run: |
+          version=$(node -p "require('./package.json').version")
+          echo "Waiting for dom-to-semantic-markdown@$version to be available on NPM..."
           for i in {1..10}; do
-            if npm info your-package-name > /dev/null 2>&1; then
-              echo "Package is available on NPM";
+            if npm info dom-to-semantic-markdown@$version > /dev/null 2>&1; then
+              echo "dom-to-semantic-markdown@$version is now available on NPM";
               break;
             else
-              echo "Package not available yet, retrying in 30 seconds...";
+              echo "Version not available yet, retrying in 5 seconds...";
               sleep 5;
             fi;
           done
