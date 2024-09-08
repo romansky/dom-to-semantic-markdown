@@ -43,6 +43,19 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Check if the published package is available on NPM
+      - name: Wait for NPM package availability
+        run: |
+          for i in {1..10}; do
+            if npm info your-package-name > /dev/null 2>&1; then
+              echo "Package is available on NPM";
+              break;
+            else
+              echo "Package not available yet, retrying in 30 seconds...";
+              sleep 5;
+            fi;
+          done
+
       - name: Build d2m project
         run: yarn build
         working-directory: examples/cli
