@@ -299,7 +299,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
 }
 
 function escapeMarkdownCharacters(text: string, isInlineCode = false) {
-    if (isInlineCode) {
+    if (isInlineCode || !text?.trim()) {
         // In inline code, we don't escape any characters
         return text;
     }
