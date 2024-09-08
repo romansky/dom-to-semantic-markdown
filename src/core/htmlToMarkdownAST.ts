@@ -1,4 +1,5 @@
 import {ConversionOptions, MetaDataNode, SemanticMarkdownAST} from "../types/markdownTypes";
+import {_Node} from "./ElementNode";
 
 export function htmlToMarkdownAST(element: Element, options?: ConversionOptions, indentLevel: number = 0): SemanticMarkdownAST[] {
     let result: SemanticMarkdownAST[] = [];
@@ -14,14 +15,14 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
         if (overriddenElementProcessing) {
             debugLog(`Element Processing Overridden: '${childElement.nodeType}'`);
             result.push(...overriddenElementProcessing);
-        } else if (childElement.nodeType === Node.TEXT_NODE) {
+        } else if (childElement.nodeType === _Node.TEXT_NODE) {
             const textContent = escapeMarkdownCharacters(childElement.textContent?.trim() ?? '');
             if (textContent && !!childElement.textContent) {
                 debugLog(`Text Node: '${textContent}'`);
                 // preserve whitespaces when text childElement is not empty
                 result.push({type: 'text', content: childElement.textContent?.trim()});
             }
-        } else if (childElement.nodeType === Node.ELEMENT_NODE) {
+        } else if (childElement.nodeType === _Node.ELEMENT_NODE) {
             const elem = childElement as Element;
             if (/^h[1-6]$/i.test(elem.tagName)) {
                 const level = parseInt(elem.tagName.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6;
@@ -51,7 +52,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                         (elem as HTMLAnchorElement).href?.substring(options.websiteDomain.length) :
                         (elem as HTMLAnchorElement).href;
                     // if all children are text,
-                    if (Array.from(elem.childNodes).every(_ => _.nodeType === Node.TEXT_NODE)) {
+                    if (Array.from(elem.childNodes).every(_ => _.nodeType === _Node.TEXT_NODE)) {
                         result.push({
                             type: 'link',
                             href: href,
@@ -117,7 +118,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     const cells = Array.from(row.querySelectorAll('th, td')).map((cell, columnIndex) => {
                         return {
                             type: 'tableCell' as const,
-                            content: cell.nodeType === Node.TEXT_NODE
+                            content: cell.nodeType === _Node.TEXT_NODE
                                 ? escapeMarkdownCharacters(cell.textContent?.trim() ?? '')
                                 : htmlToMarkdownAST(cell, options, indentLevel + 1),
                             colId: colIds[columnIndex] as string | undefined

@@ -1,3 +1,5 @@
+import {_Node} from "./ElementNode";
+
 const enableDebug = false;
 const debugMessage = (message: string) => {
     if (enableDebug) {
@@ -177,9 +179,9 @@ export function getVisibleText(element: Element): string {
 
     let text = '';
     for (const child of Array.from(element.childNodes)) {
-        if (child.nodeType === Node.TEXT_NODE) {
+        if (child.nodeType === _Node.TEXT_NODE) {
             text += child.textContent;
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
+        } else if (child.nodeType === _Node.ELEMENT_NODE) {
             text += getVisibleText(child as Element);
         }
     }
