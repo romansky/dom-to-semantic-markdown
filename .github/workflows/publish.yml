@@ -37,13 +37,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Install d2m dependencies
-        run: yarn install
-        working-directory: examples/cli
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-
       # Wait for the specific version of the NPM package to become available
       - name: Wait for NPM package version availability
         run: |
@@ -57,7 +50,13 @@ jobs:
               echo "Version not available yet, retrying in 5 seconds...";
               sleep 5;
             fi;
-          done
+          done          
+
+      - name: Install d2m dependencies
+        run: yarn install
+        working-directory: examples/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Build d2m project
         run: yarn build
