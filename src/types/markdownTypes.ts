@@ -1,14 +1,14 @@
 export type BoldNode = {
     type: 'bold';
-    content: string;
+    content: string | SemanticMarkdownAST[];
 };
 export type ItalicNode = {
     type: 'italic';
-    content: string;
+    content: string | SemanticMarkdownAST[];
 };
 export type StrikethroughNode = {
     type: 'strikethrough';
-    content: string;
+    content: string | SemanticMarkdownAST[];
 };
 // Define heading levels
 export type HeadingNode = {

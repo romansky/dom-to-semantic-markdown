@@ -224,24 +224,27 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                         break;
                     case 'strong':
                     case 'b':
-                        if (content) {
-                            debugLog(`Bold: '${content}'`);
-                            result.push({type: 'bold', content});
-                        }
+                        debugLog(`Bold: '${content}'`);
+                        result.push({
+                            type: 'bold',
+                            content: htmlToMarkdownAST(elem, options, indentLevel + 1)
+                        });
                         break;
                     case 'em':
                     case 'i':
-                        if (content) {
-                            debugLog(`Italic: '${content}'`);
-                            result.push({type: 'italic', content});
-                        }
+                        debugLog(`Italic: '${content}'`);
+                        result.push({
+                            type: 'italic',
+                            content: htmlToMarkdownAST(elem, options, indentLevel + 1)
+                        });
                         break;
                     case 's':
                     case 'strike':
-                        if (content) {
-                            debugLog(`Strikethrough: '${content}'`);
-                            result.push({type: 'strikethrough', content});
-                        }
+                        debugLog(`Strikethrough: '${content}'`);
+                        result.push({
+                            type: 'strikethrough',
+                            content: htmlToMarkdownAST(elem, options, indentLevel + 1)
+                        });
                         break;
                     case 'code':
                         if (content) {

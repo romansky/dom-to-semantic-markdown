@@ -65,12 +65,12 @@ function markdownMetaASTToString(nodes: SemanticMarkdownAST[], options?: Convers
 
     return markdownString;
 }
+
 function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: ConversionOptions, indentLevel: number = 0): string {
     let markdownString = '';
 
-    nodes.forEach((node) => {
-
-        const indent = ' '.repeat(indentLevel * 2); // Adjust the multiplier for different indent sizes
+    nodes.forEach((node, index) => {
+        const indent = ' '.repeat(indentLevel * 2);
 
         const nodeRenderingOverride = options?.overrideNodeRenderer?.(node, options, indentLevel);
         if (nodeRenderingOverride) {
@@ -82,35 +82,48 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                 case 'italic':
                 case 'strikethrough':
                 case 'link':
-                    const isLastWhitespace = /\s/.test(markdownString.slice(-1));
-                    const textNodeTypes = ['text', 'bold', 'italic', 'strikethrough', 'link'];
-                    const isStartsWithWhiteSpace = textNodeTypes.includes(node.type) && /\s/.test(node.content.slice(0, 1)[0] as string);
-
-                    if (!isLastWhitespace && node.content !== '.' && !isStartsWithWhiteSpace) {
-                        markdownString += ' ';
-                    }
+                    const prevNode = index > 0 ? nodes[index - 1] : null;
+                    const nextNode = index < nodes.length - 1 ? nodes[index + 1] : null;
+                    const isPrevNodeFormatting = prevNode && ['bold', 'italic', 'strikethrough', 'link'].includes(prevNode.type);
+                    const isNextNodePunctuation = nextNode && nextNode.type === 'text' && /^[.,!?;:]/.test(nextNode.content);
 
                     if (node.type === 'text') {
-
+                        if (!isPrevNodeFormatting && !isNextNodePunctuation && !/^\s/.test(node.content) && markdownString.length > 0 && !/\s$/.test(markdownString)) {
+                            markdownString += ' ';
+                        }
                         markdownString += `${indent}${node.content}`;
-                    } else if (node.type === 'bold') {
-                        markdownString += `**${node.content}**`;
-                    } else if (node.type === 'italic') {
-                        markdownString += `*${node.content}*`;
-                    } else if (node.type === 'strikethrough') {
-                        markdownString += `~~${node.content}~~`;
-                    } else if (node.type === 'link') {
-                        // Check if the link contains only text
-                        if (node.content.length === 1 && node.content[0].type === 'text') {
-                            // Use native markdown syntax for text-only links
-                            markdownString += ` [${node.content[0].content}](${node.href})`;
+                    } else {
+                        let content = '';
+                        if (Array.isArray(node.content)) {
+                            content = markdownContentASTToString(node.content, options, indentLevel);
                         } else {
-                            // Use HTML <a> tag for links with rich content
-                            const linkContent = markdownContentASTToString(node.content, options, indentLevel + 1);
-                            markdownString += ` <a href="${node.href}">${linkContent}</a>`;
+                            content = node.content;
+                        }
+                        content = content.trim();
+
+                        if (!isPrevNodeFormatting && markdownString.length > 0 && !/\s$/.test(markdownString)) {
+                            markdownString += ' ';
+                        }
+
+                        if (node.type === 'bold') {
+                            markdownString += `**${content}**`;
+                        } else if (node.type === 'italic') {
+                            markdownString += `*${content}*`;
+                        } else if (node.type === 'strikethrough') {
+                            markdownString += `~~${content}~~`;
+                        } else if (node.type === 'link') {
+                            if (node.content.length === 1 && node.content[0].type === 'text') {
+                                markdownString += `[${content}](${node.href})`;
+                            } else {
+                                markdownString += `<a href="${node.href}">${content}</a>`;
+                            }
+                        }
+
+                        // Add space after closing tag if next node is not punctuation
+                        if (!isNextNodePunctuation && nextNode) {
+                            markdownString += ' ';
                         }
                     }
-
                     break;
                 case 'heading':
                     const isEndsWithNewLine = markdownString.slice(-1) === '\n';
