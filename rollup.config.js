@@ -8,7 +8,7 @@ export default [
         input: 'src/index.ts',
         output: {
             file: 'dist/browser/bundle.js',
-            format: 'esm',
+            format: 'iife',
             name: 'htmlToSMD' // Replace with your library's name
         },
         plugins: [

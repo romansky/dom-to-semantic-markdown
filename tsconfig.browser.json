@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "module": "esnext",
+    "module": "ES2015",
     "outDir": "./dist/browser",
     "lib": ["ES2022", "DOM"]
   }
