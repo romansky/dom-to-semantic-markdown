@@ -39,7 +39,7 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
             } else if (elem.tagName.toLowerCase() === 'a') {
                 debugLog(`Link: '${(elem as HTMLAnchorElement).href}' with text '${elem.textContent}'`);
                 // Check if the href is a data URL for an image
-                if ((elem as HTMLAnchorElement).href?.startsWith("data:image")) {
+                if (typeof (elem as HTMLAnchorElement).href === 'string' && (elem as HTMLAnchorElement).href.startsWith("data:image")) {
                     // If it's a data URL for an image, skip this link
                     result.push({
                         type: 'link',
@@ -48,9 +48,13 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     });
                 } else {
                     // Process the link as usual
-                    const href = options?.websiteDomain && (elem as HTMLAnchorElement).href?.startsWith(options.websiteDomain) ?
-                        (elem as HTMLAnchorElement).href?.substring(options.websiteDomain.length) :
-                        (elem as HTMLAnchorElement).href;
+                    let href = (elem as HTMLAnchorElement).href;
+                    if (typeof href === 'string') {
+                        href = options?.websiteDomain && href.startsWith(options.websiteDomain) ?
+                            href.substring(options.websiteDomain.length) : href;
+                    } else {
+                        href = '#'; // Use a default value when href is not a string
+                    }
                     // if all children are text,
                     if (Array.from(elem.childNodes).every(_ => _.nodeType === _Node.TEXT_NODE)) {
                         result.push({

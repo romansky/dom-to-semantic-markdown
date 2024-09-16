@@ -182,6 +182,31 @@ describe('HTML to Markdown conversion', () => {
         expect(convertHtmlToMarkdown(html, options).trim()).toBe(expected);
     });
 
+    test('handles SVGAnimatedString in anchor tags', () => {
+        const svgHtml = `
+            <svg>
+                <a xlink:href="#test">
+                    <text>SVG Link</text>
+                </a>
+            </svg>
+        `;
+        const expected = '[SVG Link](#test)';
+        expect(convertHtmlToMarkdown(svgHtml, {
+            overrideDOMParser: new dom.window.DOMParser(),
+            overrideElementProcessing: (element) => {
+                console.log(element, element.textContent);
+                if (element.tagName?.toLowerCase() === 'a' && element.namespaceURI === 'http://www.w3.org/2000/svg') {
+                    const href = element.getAttributeNS('http://www.w3.org/1999/xlink', 'href') || '#';
+                    return [{
+                        type: 'link',
+                        href: href,
+                        content: [{type: 'text', content: element.textContent?.trim() || ''}]
+                    }];
+                }
+            }
+        }).trim()).toBe(expected);
+    });
+
 });
 
 describe('Custom Element Processing and Rendering', () => {
