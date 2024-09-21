@@ -70,7 +70,7 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
     let markdownString = '';
 
     nodes.forEach((node, index) => {
-        const indent = ' '.repeat(indentLevel * 2);
+        const indent = ' '.repeat(indentLevel * 2); // adjust the multiplier for different indent sizes
 
         const nodeRenderingOverride = options?.overrideNodeRenderer?.(node, options, indentLevel);
         if (nodeRenderingOverride) {
@@ -88,7 +88,7 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                     const isNextNodePunctuation = nextNode && nextNode.type === 'text' && /^[.,!?;:]/.test(nextNode.content);
 
                     if (node.type === 'text') {
-                        if (!isPrevNodeFormatting && !isNextNodePunctuation && !/^\s/.test(node.content) && markdownString.length > 0 && !/\s$/.test(markdownString)) {
+                        if (!isPrevNodeFormatting && !isNextNodePunctuation && !/^\s/.test(node.content) && markdownString.length > 0 && !/\s/.test(markdownString.slice(-1))) {
                             markdownString += ' ';
                         }
                         markdownString += `${indent}${node.content}`;
@@ -112,9 +112,12 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                         } else if (node.type === 'strikethrough') {
                             markdownString += `~~${content}~~`;
                         } else if (node.type === 'link') {
+                            // check if the link contains only text
                             if (node.content.length === 1 && node.content[0].type === 'text') {
+                                // use native markdown syntax for text-only links
                                 markdownString += `[${content}](${node.href})`;
                             } else {
+                                // Use HTML <a> tag for links with rich content
                                 markdownString += `<a href="${node.href}">${content}</a>`;
                             }
                         }
