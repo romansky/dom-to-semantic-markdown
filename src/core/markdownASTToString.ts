@@ -86,10 +86,12 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                     const nextNode = index < nodes.length - 1 ? nodes[index + 1] : null;
                     const isPrevNodeFormatting = prevNode && ['bold', 'italic', 'strikethrough', 'link'].includes(prevNode.type);
                     const isNextNodePunctuation = nextNode && nextNode.type === 'text' && /^[.,!?;:]/.test(nextNode.content);
-                    const isLastCharWhitespace = markdownString.length > 0 && /\s/.test(markdownString.slice(-1));
+                    const isNotEmpty = markdownString.length > 0;
+                    const isLastCharWhitespace =  /\s/.test(markdownString.slice(-1));
+                    const isFirstCharWhitespace =  /^\s/.test(markdownString.slice(0));
 
                     if (node.type === 'text') {
-                        if (!isPrevNodeFormatting && !isNextNodePunctuation && !/^\s/.test(node.content) && markdownString.length > 0 && !isLastCharWhitespace) {
+                        if (isNotEmpty && !isPrevNodeFormatting && !isNextNodePunctuation && !isFirstCharWhitespace && !isLastCharWhitespace) {
                             markdownString += ' ';
                         }
                         markdownString += `${indent}${node.content}`;
@@ -102,7 +104,7 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                         }
                         content = content.trim();
 
-                        if (!isPrevNodeFormatting && markdownString.length > 0 && !isLastCharWhitespace) {
+                        if (isNotEmpty && !isPrevNodeFormatting && !isLastCharWhitespace) {
                             markdownString += ' ';
                         }
 
