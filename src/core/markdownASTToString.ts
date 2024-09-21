@@ -101,7 +101,7 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                         }
                         content = content.trim();
 
-                        if (!isPrevNodeFormatting && markdownString.length > 0 && !/\s$/.test(markdownString)) {
+                        if (!isPrevNodeFormatting && markdownString.length > 0 && !/\s/.test(markdownString.slice(-1))) {
                             markdownString += ' ';
                         }
 
