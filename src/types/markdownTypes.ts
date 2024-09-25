@@ -42,6 +42,8 @@ export type TableCellNode = {
     type: 'tableCell';
     content: string | SemanticMarkdownAST[];
     colId?: string; // Add column ID to TableCell
+    colspan?: number;
+    rowspan?: number;
 };
 export type TableRowNode = {
     type: 'tableRow';
