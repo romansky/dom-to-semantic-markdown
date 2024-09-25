@@ -65,6 +65,7 @@ function markdownMetaASTToString(nodes: SemanticMarkdownAST[], options?: Convers
 
     return markdownString;
 }
+
 function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: ConversionOptions, indentLevel: number = 0): string {
     let markdownString = '';
 
@@ -148,16 +149,44 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                     markdownString += '\n';
                     break;
                 case 'table':
+                    const maxColumns = Math.max(...node.rows.map(row =>
+                        row.cells.reduce((sum, cell) => sum + (cell.colspan || 1), 0)
+                    ));
+
                     node.rows.forEach((row) => {
+                        let currentColumn = 0;
                         row.cells.forEach((cell) => {
                             let cellContent = typeof cell.content === 'string'
                                 ? cell.content
                                 : markdownContentASTToString(cell.content, options, indentLevel + 1).trim();
+
                             if (cell.colId) {
-                                cellContent += ' ' + `<!-- ${cell.colId} -->`
+                                cellContent += ` <!-- ${cell.colId} -->`;
                             }
+
+                            if (cell.colspan && cell.colspan > 1) {
+                                cellContent += ` <!-- colspan: ${cell.colspan} -->`;
+                            }
+
+                            if (cell.rowspan && cell.rowspan > 1) {
+                                cellContent += ` <!-- rowspan: ${cell.rowspan} -->`;
+                            }
+
                             markdownString += `| ${cellContent} `;
+                            currentColumn += cell.colspan || 1;
+
+                            // Add empty cells for colspan
+                            for (let i = 1; i < (cell.colspan || 1); i++) {
+                                markdownString += '| ';
+                            }
                         });
+
+                        // Fill remaining columns with empty cells
+                        while (currentColumn < maxColumns) {
+                            markdownString += '|  ';
+                            currentColumn++;
+                        }
+
                         markdownString += '|\n';
                     });
                     markdownString += '\n';

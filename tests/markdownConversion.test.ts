@@ -138,6 +138,52 @@ describe('HTML to Markdown conversion', () => {
         ).trim()).toBe(expected);
     });
 
+    test('converts tables with merged cells', () => {
+        const html = `
+    <table border="1" cellspacing="0" cellpadding="0" width="0">
+    <tbody>
+       <tr>
+           <td colspan="5">TITLE A</td>
+       </tr>
+       <tr>
+           <td>ROW 1 COL 1</td>
+           <td>ROW 1 COL 2</td>
+           <td>ROW 1 COL 3</td>
+           <td>ROW 1 COL 4</td>
+           <td>ROW 1 COL 5</td>
+       </tr>
+       <tr>
+           <td rowspan="2">ROW 2-3 COL 1</td>
+           <td colspan="2">ROW 2 COL 2-3</td>
+           <td>ROW 2 COL 4</td>
+           <td>ROW 2 COL 5</td>
+       </tr>
+       <tr>
+           <td>ROW 3 COL 1</td>
+           <td>ROW 3 COL 2</td>
+           <td>ROW 3 COL 3</td>
+           <td>ROW 3 COL 4</td>
+       </tr>
+       <tr>
+           <td colspan="5">TITLE B</td>
+       </tr>
+    </tbody>
+    </table>
+    `;
+
+        const expected =
+    `| TITLE A <!-- col-0 --> <!-- colspan: 5 --> | | | | |\n` +
+    `| ROW 1 COL 1 <!-- col-0 --> | ROW 1 COL 2 <!-- col-1 --> | ROW 1 COL 3 <!-- col-2 --> | ROW 1 COL 4 <!-- col-3 --> | ROW 1 COL 5 <!-- col-4 --> |\n` +
+    `| ROW 2-3 COL 1 <!-- col-0 --> <!-- rowspan: 2 --> | ROW 2 COL 2-3 <!-- col-1 --> <!-- colspan: 2 --> | | ROW 2 COL 4 <!-- col-3 --> | ROW 2 COL 5 <!-- col-4 --> |\n` +
+    `| ROW 3 COL 1 <!-- col-0 --> | ROW 3 COL 2 <!-- col-1 --> | ROW 3 COL 3 <!-- col-2 --> | ROW 3 COL 4 <!-- col-3 --> |  |\n` +
+    `| TITLE B <!-- col-0 --> <!-- colspan: 5 --> | | | | |\n`;
+
+        expect(convertHtmlToMarkdown(html, {
+            overrideDOMParser: new dom.window.DOMParser(),
+            enableTableColumnTracking: true
+        }).trim()).toBe(expected.trim());
+    });
+
     test('converts nested structures', () => {
         const html = `
       <div>

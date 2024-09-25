@@ -112,21 +112,29 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
 
                 if (options?.enableTableColumnTracking) {
                     // Generate unique column IDs
-                    const headerCells = Array.from(elem.querySelectorAll('th'));
+                    const headerCells = Array.from(elem.querySelectorAll('th, td'));
                     headerCells.forEach((_, index) => {
                         colIds.push(`col-${index}`);
                     });
                 }
+
                 const tableRows = Array.from(elem.querySelectorAll('tr'));
                 const markdownTableRows = tableRows.map(row => {
-                    const cells = Array.from(row.querySelectorAll('th, td')).map((cell, columnIndex) => {
-                        return {
+                    let columnIndex = 0;
+                    const cells = Array.from(row.querySelectorAll('th, td')).map((cell) => {
+                        const colspan = parseInt(cell.getAttribute('colspan') || '1', 10);
+                        const rowspan = parseInt(cell.getAttribute('rowspan') || '1', 10);
+                        const cellNode = {
                             type: 'tableCell' as const,
                             content: cell.nodeType === _Node.TEXT_NODE
                                 ? escapeMarkdownCharacters(cell.textContent?.trim() ?? '')
                                 : htmlToMarkdownAST(cell, options, indentLevel + 1),
-                            colId: colIds[columnIndex] as string | undefined
+                            colId: colIds[columnIndex] as string | undefined,
+                            colspan: colspan > 1 ? colspan : undefined,
+                            rowspan: rowspan > 1 ? rowspan : undefined
                         };
+                        columnIndex += colspan;
+                        return cellNode;
                     });
                     return {type: 'tableRow' as const, cells};
                 });
@@ -137,9 +145,16 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
                     if (hasHeaders) {
                         // Create a header separator row
                         const headerSeparatorCells = Array.from(tableRows[0].querySelectorAll('th, td'))
-                            .map(() => ({type: 'tableCell' as const, content: '---', colId: undefined}));
+                            .map(() => ({
+                                type: 'tableCell' as const,
+                                content: '---',
+                                colId: undefined,
+                                colspan: undefined,
+                                rowspan: undefined,
+                            }));
                         const headerSeparatorRow = {
-                            type: 'tableRow' as const, cells: headerSeparatorCells
+                            type: 'tableRow' as const,
+                            cells: headerSeparatorCells,
                         };
                         markdownTableRows.splice(1, 0, headerSeparatorRow);
                     }
