@@ -253,6 +253,18 @@ describe('HTML to Markdown conversion', () => {
         }).trim()).toBe(expected);
     });
 
+    test("converts nested strong and anchor tags", () => {
+        const html =
+            '<p><strong><a href="https://example.com/" rel>example link:</a><span> </span></strong><span>Additional text</span></p>';
+        const expected =
+            "**[example link:](https://example.com/)** Additional text";
+        expect(
+            convertHtmlToMarkdown(html, {
+                overrideDOMParser: new dom.window.DOMParser(),
+            }).trim()
+        ).toBe(expected);
+    });
+    
 });
 
 describe('Custom Element Processing and Rendering', () => {
