@@ -83,7 +83,7 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                 case 'strikethrough':
                 case 'link':
                     const prevNode = index > 0 ? nodes[index - 1] : null;
-                    const nextNode = index < nodes.length - 1 ? nodes[index + 1] : null;
+                    const nextNode = nodes[index + 1];
                     const isPrevNodeFormatting = prevNode && ['bold', 'italic', 'strikethrough', 'link'].includes(prevNode.type);
                     const isNextNodePunctuation = nextNode && nextNode.type === 'text' && /^[.,!?;:]/.test(nextNode.content);
                     const isNotEmpty = markdownString.length > 0;
@@ -118,7 +118,7 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                             // check if the link contains only text
                             if (node.content.length === 1 && node.content[0].type === 'text') {
                                 // use native markdown syntax for text-only links
-                                markdownString += `[${content}](${node.href})`;
+                                markdownString += `[${content}](${encodeURI(node.href)})`;
                             } else {
                                 // Use HTML <a> tag for links with rich content
                                 markdownString += `<a href="${node.href}">${content}</a>`;
