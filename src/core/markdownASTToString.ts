@@ -70,7 +70,6 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
     let markdownString = '';
 
     nodes.forEach((node) => {
-
         const indent = ' '.repeat(indentLevel * 2); // Adjust the multiplier for different indent sizes
 
         const nodeRenderingOverride = options?.overrideNodeRenderer?.(node, options, indentLevel);
@@ -83,35 +82,40 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                 case 'italic':
                 case 'strikethrough':
                 case 'link':
-                    const isLastWhitespace = /\s/.test(markdownString.slice(-1));
-                    const textNodeTypes = ['text', 'bold', 'italic', 'strikethrough', 'link'];
-                    const isStartsWithWhiteSpace = textNodeTypes.includes(node.type) && /\s/.test(node.content.slice(0, 1)[0] as string);
+                    let content = node.content as string; // might be a nodes array but we take care of that below
+                    if (Array.isArray(node.content)) {
+                        content = markdownContentASTToString(node.content, options, indentLevel);
+                    } 
+                   
+                    const isMarkdownStringNotEmpty = markdownString.length > 0; 
+                    const isFirstCharOfContentWhitespace = /\s/.test(content.slice(0, 1));
+                    const isLastCharOfMarkdownWhitespace = /\s/.test(markdownString.slice(-1));
+                    const isContentPunctuation = content.length === 1 && /^[.,!?;:]/.test(content);
 
-                    if (!isLastWhitespace && node.content !== '.' && !isStartsWithWhiteSpace) {
+                    if (isMarkdownStringNotEmpty && !isContentPunctuation && !isFirstCharOfContentWhitespace && !isLastCharOfMarkdownWhitespace) {
                         markdownString += ' ';
-                    }
+                    } 
 
                     if (node.type === 'text') {
-
-                        markdownString += `${indent}${node.content}`;
-                    } else if (node.type === 'bold') {
-                        markdownString += `**${node.content}**`;
-                    } else if (node.type === 'italic') {
-                        markdownString += `*${node.content}*`;
-                    } else if (node.type === 'strikethrough') {
-                        markdownString += `~~${node.content}~~`;
-                    } else if (node.type === 'link') {
-                        // Check if the link contains only text
-                        if (node.content.length === 1 && node.content[0].type === 'text') {
-                            // Use native markdown syntax for text-only links
-                            markdownString += ` [${node.content[0].content}](${node.href})`;
-                        } else {
-                            // Use HTML <a> tag for links with rich content
-                            const linkContent = markdownContentASTToString(node.content, options, indentLevel + 1);
-                            markdownString += ` <a href="${node.href}">${linkContent}</a>`;
+                        markdownString += `${indent}${content}`;
+                    } else {
+                        if (node.type === 'bold') {
+                            markdownString += `**${content}**`;
+                        } else if (node.type === 'italic') {
+                            markdownString += `*${content}*`;
+                        } else if (node.type === 'strikethrough') {
+                            markdownString += `~~${content}~~`;
+                        } else if (node.type === 'link') {
+                            // check if the link contains only text
+                            if (node.content.length === 1 && node.content[0].type === 'text') {
+                                // use native markdown syntax for text-only links
+                                markdownString += `[${content}](${encodeURI(node.href)})`;
+                            } else {
+                                // Use HTML <a> tag for links with rich content
+                                markdownString += `<a href="${node.href}">${content}</a>`;
+                            }
                         }
                     }
-
                     break;
                 case 'heading':
                     const isEndsWithNewLine = markdownString.slice(-1) === '\n';
