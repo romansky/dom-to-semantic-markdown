@@ -85,16 +85,16 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                     let content = node.content as string; // might be a nodes array but we take care of that below
                     if (Array.isArray(node.content)) {
                         content = markdownContentASTToString(node.content, options, indentLevel);
-                    } 
-                   
-                    const isMarkdownStringNotEmpty = markdownString.length > 0; 
+                    }
+
+                    const isMarkdownStringNotEmpty = markdownString.length > 0;
                     const isFirstCharOfContentWhitespace = /\s/.test(content.slice(0, 1));
                     const isLastCharOfMarkdownWhitespace = /\s/.test(markdownString.slice(-1));
                     const isContentPunctuation = content.length === 1 && /^[.,!?;:]/.test(content);
 
                     if (isMarkdownStringNotEmpty && !isContentPunctuation && !isFirstCharOfContentWhitespace && !isLastCharOfMarkdownWhitespace) {
                         markdownString += ' ';
-                    } 
+                    }
 
                     if (node.type === 'text') {
                         markdownString += `${indent}${content}`;
@@ -122,7 +122,10 @@ function markdownContentASTToString(nodes: SemanticMarkdownAST[], options?: Conv
                     if (!isEndsWithNewLine) {
                         markdownString += '\n';
                     }
-                    markdownString += `${'#'.repeat(node.level)} ${node.content}\n\n`;
+                    const headingContent = typeof node.content === 'string'
+                        ? node.content
+                        : markdownContentASTToString(node.content, options, indentLevel);
+                    markdownString += `${'#'.repeat(node.level)} ${headingContent}\n\n`;
                     break;
                 case 'image':
                     if (!node.alt?.trim() || !!node.src?.trim()) {

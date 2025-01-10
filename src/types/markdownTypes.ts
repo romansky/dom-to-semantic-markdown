@@ -14,7 +14,7 @@ export type StrikethroughNode = {
 export type HeadingNode = {
     type: 'heading';
     level: 1 | 2 | 3 | 4 | 5 | 6;
-    content: string;
+    content: string | SemanticMarkdownAST[];
 };
 // Define links and images
 export type LinkNode = {

@@ -4,6 +4,7 @@ import {
     convertElementToMarkdown,
     ConversionOptions
 } from '../src';
+import {_Node} from "../src/core/ElementNode";
 
 // Helper function to create a DOM element
 function createElement(html: string): Element {
@@ -32,6 +33,48 @@ describe('HTML to Markdown conversion', () => {
         const expected = '# Heading 1\n\n## Heading 2\n\n### Heading 3';
         expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim()).toBe(expected);
     });
+
+    test('converts headings with links', () => {
+        const html = `
+        <h1>Welcome to <a href="/home">Homepage</a></h1>
+        <h2>Read our <a href="/blog">Blog</a> section</h2>
+        <h3>Contact <a href="mailto:info@example.com">Support</a></h3>
+    `;
+        const expected =
+            '# Welcome to [Homepage](/home)\n\n' +
+            '## Read our [Blog](/blog) section\n\n' +
+            '### Contact [Support](mailto:info@example.com)';
+
+        expect(convertHtmlToMarkdown(html, {
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expected);
+    });
+
+    test('converts headings with mixed inline elements', () => {
+        const html = `
+        <h1>Welcome to <a href="/home">Home</a> - <strong>Start Here</strong></h1>
+        <h2>Latest <em>Updates</em> and <a href="/news">News</a></h2>
+    `;
+        const expected =
+            '# Welcome to [Home](/home) - **Start Here**\n\n' +
+            '## Latest *Updates* and [News](/news)';
+
+        expect(convertHtmlToMarkdown(html, {
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expected);
+    });
+
+    test('converts headings with nested links', () => {
+        const html = `
+        <h2>Resources: <span><a href="/docs">Documentation</a></span> and <span><a href="/api">API</a></span></h2>
+    `;
+        const expected = '## Resources: [Documentation](/docs) and [API](/api)';
+
+        expect(convertHtmlToMarkdown(html, {
+            overrideDOMParser: new dom.window.DOMParser()
+        }).trim()).toBe(expected);
+    });
+
 
     test('converts unordered list', () => {
         const html = '<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>';
@@ -172,11 +215,11 @@ describe('HTML to Markdown conversion', () => {
     `;
 
         const expected =
-    `| TITLE A <!-- col-0 --> <!-- colspan: 5 --> | | | | |\n` +
-    `| ROW 1 COL 1 <!-- col-0 --> | ROW 1 COL 2 <!-- col-1 --> | ROW 1 COL 3 <!-- col-2 --> | ROW 1 COL 4 <!-- col-3 --> | ROW 1 COL 5 <!-- col-4 --> |\n` +
-    `| ROW 2-3 COL 1 <!-- col-0 --> <!-- rowspan: 2 --> | ROW 2 COL 2-3 <!-- col-1 --> <!-- colspan: 2 --> | | ROW 2 COL 4 <!-- col-3 --> | ROW 2 COL 5 <!-- col-4 --> |\n` +
-    `| ROW 3 COL 1 <!-- col-0 --> | ROW 3 COL 2 <!-- col-1 --> | ROW 3 COL 3 <!-- col-2 --> | ROW 3 COL 4 <!-- col-3 --> |  |\n` +
-    `| TITLE B <!-- col-0 --> <!-- colspan: 5 --> | | | | |\n`;
+            `| TITLE A <!-- col-0 --> <!-- colspan: 5 --> | | | | |\n` +
+            `| ROW 1 COL 1 <!-- col-0 --> | ROW 1 COL 2 <!-- col-1 --> | ROW 1 COL 3 <!-- col-2 --> | ROW 1 COL 4 <!-- col-3 --> | ROW 1 COL 5 <!-- col-4 --> |\n` +
+            `| ROW 2-3 COL 1 <!-- col-0 --> <!-- rowspan: 2 --> | ROW 2 COL 2-3 <!-- col-1 --> <!-- colspan: 2 --> | | ROW 2 COL 4 <!-- col-3 --> | ROW 2 COL 5 <!-- col-4 --> |\n` +
+            `| ROW 3 COL 1 <!-- col-0 --> | ROW 3 COL 2 <!-- col-1 --> | ROW 3 COL 3 <!-- col-2 --> | ROW 3 COL 4 <!-- col-3 --> |  |\n` +
+            `| TITLE B <!-- col-0 --> <!-- colspan: 5 --> | | | | |\n`;
 
         expect(convertHtmlToMarkdown(html, {
             overrideDOMParser: new dom.window.DOMParser(),
@@ -264,7 +307,7 @@ describe('HTML to Markdown conversion', () => {
             }).trim()
         ).toBe(expected);
     });
-    
+
 });
 
 describe('Custom Element Processing and Rendering', () => {
@@ -311,8 +354,13 @@ describe('Custom Element Processing and Rendering', () => {
         const html = '<h1>Title</h1>';
         const options: ConversionOptions = {
             overrideNodeRenderer: (node) => {
-                if (node.type === 'heading' && node.level === 1) {
-                    return `==== ${node.content} ====\n`;
+                if (node.type === 'heading' && node.level === 1 && typeof node.content !== 'string') {
+                    if (node.content[0].type === 'text') {
+                        return `==== ${node.content[0].content} ====\n`;
+                    } else {
+                        return "unexpected"
+                    }
+
                 }
             },
             overrideDOMParser: new dom.window.DOMParser()
@@ -325,8 +373,12 @@ describe('Custom Element Processing and Rendering', () => {
         const html = '<custom-element>Custom content</custom-element><h1>Title</h1>';
         const options: ConversionOptions = {
             overrideElementProcessing: (element) => {
-                if (element.tagName.toLowerCase() === 'custom-element') {
+                if (element.nodeType === _Node.TEXT_NODE && element.textContent) {
+                    return [{type: "text", content: element.textContent}]
+                } else if (element.tagName.toLowerCase() === 'custom-element') {
                     return [{type: 'custom', content: element.textContent}];
+                } else {
+                    return undefined;
                 }
             },
             renderCustomNode: (node) => {
@@ -335,8 +387,10 @@ describe('Custom Element Processing and Rendering', () => {
                 }
             },
             overrideNodeRenderer: (node) => {
-                if (node.type === 'heading' && node.level === 1) {
-                    return `==== ${node.content} ====\n`;
+                if (node.type === 'heading' && node.level === 1
+                    && typeof node.content !== "string"
+                    && node.content[0].type === 'text') {
+                    return `==== ${node.content[0].content} ====\n`;
                 }
             },
             overrideDOMParser: new dom.window.DOMParser()

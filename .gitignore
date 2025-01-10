@@ -3,3 +3,4 @@ dist_browser
 node_modules
 .yarn
 version.sh
+*.copa

@@ -26,11 +26,12 @@ export function htmlToMarkdownAST(element: Element, options?: ConversionOptions,
             const elem = childElement as Element;
             if (/^h[1-6]$/i.test(elem.tagName)) {
                 const level = parseInt(elem.tagName.substring(1)) as 1 | 2 | 3 | 4 | 5 | 6;
-                const content = escapeMarkdownCharacters(elem.textContent || '').trim();
-                if (content) {
-                    debugLog(`Heading ${level}: '${elem.textContent}'`);
-                    result.push({type: 'heading', level, content});
-                }
+                debugLog(`Heading ${level}`);
+                result.push({
+                    type: 'heading',
+                    level,
+                    content: htmlToMarkdownAST(elem, options) // Process child elements
+                });
             } else if (elem.tagName.toLowerCase() === 'p') {
                 debugLog("Paragraph");
                 result.push(...htmlToMarkdownAST(elem, options));
