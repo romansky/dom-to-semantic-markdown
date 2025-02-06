@@ -38,5 +38,9 @@
     "example": "examples",
     "test": "tests"
   },
-  "keywords": []
+  "keywords": [
+    "markdown",
+    "html",
+    "llm"
+  ]
 }

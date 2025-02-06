@@ -1,5 +1,3 @@
-import {_Node} from "./ElementNode";
-
 const enableDebug = false;
 const debugMessage = (message: string) => {
     if (enableDebug) {
@@ -15,7 +13,7 @@ const debugMessage = (message: string) => {
 export function findMainContent(document: Document): Element {
     debugMessage('Entering findMainContent function');
 
-    const mainElement = document.querySelector('main');
+    const mainElement = document.querySelector('main') || document.querySelector('[role="main"]');
     if (mainElement) {
         debugMessage('Existing <main> element found');
         return mainElement;
@@ -91,16 +89,16 @@ function collectCandidates(element: Element, candidates: Element[], minScore: nu
     });
 }
 
-function calculateScore(element: Element): number {
+export function calculateScore(element: Element): number {
     let score = 0;
     let scoreLog: string[] = [];
 
     // High impact attributes
     const highImpactAttributes = ['article', 'content', 'main-container', 'main', 'main-content'];
     highImpactAttributes.forEach(attr => {
-        if (element.classList.contains(attr) || element.id.includes(attr)) {
+        if (element.classList.contains(attr) || element.id === attr) {
             score += 10;
-            scoreLog.push(`High impact attribute found: ${attr}, score increased by 10`);
+            scoreLog.push(`High impact attribute found: [${attr}] [${[...element.classList.values()].join(",")}], score increased by 10`);
         }
     });
 
@@ -108,7 +106,7 @@ function calculateScore(element: Element): number {
     const highImpactTags = ['article', 'main', 'section'];
     if (highImpactTags.includes(element.tagName.toLowerCase())) {
         score += 5;
-        scoreLog.push(`High impact tag found: ${element.tagName}, score increased by 5`);
+        scoreLog.push(`High impact tag found: [${element.tagName}], score increased by 5`);
     }
 
     // Paragraph count
@@ -162,29 +160,3 @@ function calculateLinkDensity(element: Element): number {
     return linkLength / textLength;
 }
 
-
-export function isElementVisible(element: Element): boolean {
-    if (!(element instanceof HTMLElement)) {
-        return true; // Non-HTMLElements are considered visible
-    }
-
-    const style = window.getComputedStyle(element);
-    return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
-}
-
-export function getVisibleText(element: Element): string {
-    if (!isElementVisible(element)) {
-        return '';
-    }
-
-    let text = '';
-    for (const child of Array.from(element.childNodes)) {
-        if (child.nodeType === _Node.TEXT_NODE) {
-            text += child.textContent;
-        } else if (child.nodeType === _Node.ELEMENT_NODE) {
-            text += getVisibleText(child as Element);
-        }
-    }
-
-    return text.trim();
-}

@@ -548,4 +548,5 @@ title: "Test Page Title"
         expect(convertHtmlToMarkdown(html, {overrideDOMParser: new dom.window.DOMParser()}).trim())
             .toBe(expected); // Default should be to not include meta data
     });
+
 });
