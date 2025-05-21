@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2018",
+    "outDir": "dist",
     "module": "NodeNext",
     "strict": true,
     "esModuleInterop": true,
@@ -12,7 +13,6 @@
   },
   "exclude": [
     "node_modules",
-    "dist",
     "examples",
     "tests"
   ]
