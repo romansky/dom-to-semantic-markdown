@@ -1,6 +1,6 @@
 {
   "name": "dom-to-semantic-markdown",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "DOM to Semantic-Markdown for use in LLMs",
   "repository": {
     "type": "git",
