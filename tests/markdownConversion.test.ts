@@ -6,7 +6,6 @@ import {
 } from '../src';
 import {_Node} from "../src/core/ElementNode";
 
-// Helper function to create a DOM element
 function createElement(html: string): Element {
     const div = document.createElement('div');
     div.innerHTML = html;

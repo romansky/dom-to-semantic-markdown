@@ -1,28 +1,27 @@
 #!/usr/bin/env node
 import {program} from 'commander';
 import {convertHtmlToMarkdown} from 'dom-to-semantic-markdown';
-import {chromium} from 'playwright'; // Import PageLoadOptions for type safety
+import {chromium} from 'playwright';
 import axios from 'axios';
 import fs from 'fs/promises';
 import {JSDOM} from 'jsdom';
 
-// Define allowed Playwright waitUntil events for type safety and validation
 const playwrightWaitUntilEvents = ['load', 'domcontentloaded', 'networkidle', 'commit'] as const;
 
 program
-    .version('1.4.0') // Consider aligning this with your package.json version
+    .version('1.4.0')
     .description('Convert DOM to Semantic Markdown')
     .option('-i, --input <file>', 'Input HTML file')
     .option('-o, --output <file>', 'Output Markdown file')
     .option('-e, --extract-main', 'Extract main content')
     .option('-u, --url <url>', 'URL to fetch HTML content from')
     .option('-t, --track-table-columns', 'Enable table column tracking for improved LLM data correlation')
-    .option(`-m, --include-meta-data <"basic" | "extended">`, 'Include metadata extracted from the HTML head') // Note: README uses -meta, code uses -m
+    .option(`-m, --include-meta-data <"basic" | "extended">`, 'Include metadata extracted from the HTML head')
     .option('-p, --use-playwright', 'Use Playwright to fetch HTML from URL (handles dynamic content)')
     .option(
         '--playwright-wait-until <event>',
         `Playwright page.goto waitUntil event. Allowed values: ${playwrightWaitUntilEvents.filter(e => e !== undefined).join(', ')}. Default: load.`,
-        'load' // Default value for the option
+        'load'
     )
     .parse(process.argv);
 
@@ -32,7 +31,6 @@ async function main() {
     let html: string | undefined;
     if (options.url) {
         if (options.usePlaywright) {
-            // Validate the playwrightWaitUntil option
             let waitUntilEvent = options.playwrightWaitUntil as (typeof playwrightWaitUntilEvents)[number];
             if (!playwrightWaitUntilEvents.includes(waitUntilEvent)) {
                 console.warn(
@@ -42,7 +40,6 @@ async function main() {
                 waitUntilEvent = 'load';
             }
 
-            console.log(`Fetching HTML from ${options.url} using Playwright (waitUntil: ${waitUntilEvent})...`);
             const browser = await chromium.launch();
             const context = await browser.newContext();
             const page = await context.newPage();
@@ -58,7 +55,6 @@ async function main() {
                 await browser.close();
             }
         } else {
-            console.log(`Fetching HTML from ${options.url} using Axios...`);
             const response = await axios.get(options.url);
             html = response.data;
         }
@@ -66,12 +62,11 @@ async function main() {
         html = await fs.readFile(options.input, 'utf-8');
     } else {
         console.error('Either an input file (-i) or a URL (-u) must be specified.');
-        program.help(); // Show help on error
+        program.help();
         process.exit(1);
     }
 
     if (typeof html !== 'string') {
-        // This case should ideally be handled by earlier checks, but as a safeguard:
         console.error('Failed to retrieve HTML content. Exiting.');
         process.exit(1);
     }
